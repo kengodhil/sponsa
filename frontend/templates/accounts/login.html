@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Login</h1>
+  <p class="lead">Sponsors and staff use the number and password from registration.</p>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <label>
+        {{ field.label }}
+        {{ field }}
+        {{ field.errors }}
+      </label>
+    {% endfor %}
+    <button class="btn btn-gold" type="submit">Login</button>
+  </form>
+  <p class="tiny">Ladies enter with a number only. <a href="{% url 'accounts:join_lady' %}">Enter here</a>.</p>
+</section>
+{% endblock %}

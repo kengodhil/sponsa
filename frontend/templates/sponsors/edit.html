@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Edit card{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Sponsor profile</h1>
+  <p class="lead">Ladies see your photo, city, age and intro before they pay. Full bio opens after payment.</p>
+  <form method="post" enctype="multipart/form-data" class="stack">
+    {% csrf_token %}
+    {% for field in form %}
+      <label>
+        {{ field.label }}
+        {{ field }}
+        {{ field.errors }}
+      </label>
+    {% endfor %}
+    <button class="btn btn-gold" type="submit">Save profile</button>
+  </form>
+</section>
+{% endblock %}

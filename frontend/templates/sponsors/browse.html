@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Sponsors{% endblock %}
+{% block content %}
+<section>
+  <h1>Sponsor men</h1>
+  <p class="lead">Photos and city first. Pay to open the full profile and chat.</p>
+  <form method="get" class="filters">
+    <label>City {{ form.city }}</label>
+    <label>Min age {{ form.min_age }}</label>
+    <label>Max age {{ form.max_age }}</label>
+    <label>Preference {{ form.preference }}</label>
+    <button class="btn btn-dark" type="submit">Show matches</button>
+  </form>
+
+  <div class="man-grid">
+    {% for profile in profiles %}
+      <article class="man-card" style="--accent: {{ profile.accent }}">
+        <div class="man-photo-wrap">
+          <img class="man-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+          <div class="avatar" hidden>{{ profile.initials }}</div>
+        </div>
+        <h2>{{ profile.public_name }}</h2>
+        <p class="chips"><span>{{ profile.age }} yrs</span><span>{{ profile.city }}</span></p>
+        <p>{{ profile.teaser }}</p>
+        {% if profile.id in unlocked_ids %}
+          <a class="btn btn-dark" href="{% url 'sponsors:detail' profile.pk %}">Open profile</a>
+        {% else %}
+          <a class="btn btn-gold" href="{% url 'sponsors:detail' profile.pk %}">View</a>
+        {% endif %}
+      </article>
+    {% empty %}
+      <p>No live profiles for that filter.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

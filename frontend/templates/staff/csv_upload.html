@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}CSV upload{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Upload sponsor CSV</h1>
+  <p>Columns: <code>public_name,age,city,lifestyle,preference,teaser,full_bio</code></p>
+  <form method="post" enctype="multipart/form-data" class="stack">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-gold" type="submit">Upload and publish</button>
+  </form>
+</section>
+{% endblock %}

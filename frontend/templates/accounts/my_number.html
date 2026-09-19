@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}My number{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Your number</h1>
+  <p class="phone-xl">{{ user.phone }}</p>
+  <p>Payments use this number.</p>
+</section>
+{% endblock %}

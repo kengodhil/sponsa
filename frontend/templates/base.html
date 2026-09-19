@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}Sponsa{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <header class="topbar">
+    <a class="brand" href="{% url 'home' %}">Sponsa</a>
+    <nav class="topnav">
+      {% if user.is_authenticated %}
+        {% if user.is_staff or user.role == 'admin' %}
+          <a href="{% url 'staff:dashboard' %}">Control</a>
+        {% endif %}
+        {% if user.role == 'lady' %}
+          <a href="{% url 'sponsors:browse' %}">Men</a>
+          <a href="{% url 'messaging:inbox' %}">Inbox</a>
+        {% elif user.role == 'sponsor' %}
+          <a href="{% url 'sponsors:my_listing' %}">My card</a>
+          <a href="{% url 'messaging:inbox' %}">Inbox</a>
+        {% endif %}
+        <form class="inline" method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="linkish">Out</button>
+        </form>
+      {% else %}
+        <a href="{% url 'accounts:join_lady' %}">Enter</a>
+        <a href="{% url 'accounts:login' %}">Login</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% if messages %}
+    <div class="flash-wrap">
+      {% for message in messages %}
+        <p class="flash flash-{{ message.tags }}">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main class="shell">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="foot">
+    <p>18+ only. Ladies enter with a mobile number. Unlock one sponsor for <strong>{{ unlock_fee|floatformat:0 }} TZS</strong>. Men pay {{ listing_fee|floatformat:0 }} TZS to be posted.</p>
+  </footer>
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

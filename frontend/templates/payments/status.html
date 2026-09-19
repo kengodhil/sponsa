@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Payment{% endblock %}
+{% block content %}
+<section class="card pay">
+  <h1>Payment</h1>
+  <p class="amount">{{ payment.amount|floatformat:0 }} {{ payment.currency }}</p>
+  <p>Number: <strong>{{ payment.msisdn }}</strong></p>
+  <p class="status-pill status-{{ payment.status }}">{{ payment.get_status_display }}</p>
+  {% if payment.selcom_message %}<p>{{ payment.selcom_message }}</p>{% endif %}
+
+  {% if payment.status == 'paid' %}
+    {% if payment.purpose == 'unlock' %}
+      <a class="btn btn-gold" href="{% url 'sponsors:detail' payment.sponsor_id %}">Open full profile</a>
+      <a class="btn btn-dark" href="{% url 'messaging:thread' payment.sponsor_id %}">Open chat</a>
+    {% else %}
+      <a class="btn btn-gold" href="{% url 'sponsors:my_listing' %}">See my live card</a>
+    {% endif %}
+  {% else %}
+    <p class="lead">Approve the request on your phone, then check again.</p>
+    <a class="btn btn-dark" href="{% url 'payments:status' payment.order_id %}">Check payment</a>
+    {% if sandbox %}
+      <form method="post" action="{% url 'payments:demo_confirm' payment.order_id %}">
+        {% csrf_token %}
+        <button class="btn btn-gold" type="submit">Confirm demo payment</button>
+      </form>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{% if join_role == 'lady' %}Enter{% else %}Join{% endif %}{% endblock %}
+{% block content %}
+<section class="card">
+  {% if join_role == 'lady' %}
+    <h1>Enter with your number</h1>
+    <p class="lead">Use a Tanzania mobile number. You will see sponsor photos next.</p>
+  {% else %}
+    <h1>Sponsor man join</h1>
+    <p class="lead">Create an account, add your photo and profile, then pay to go live.</p>
+  {% endif %}
+  <form method="post" class="stack">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      {% if field.name == 'is_adult_confirmed' %}
+        <label class="check">
+          {{ field }}
+          {{ field.label }}
+        </label>
+        {{ field.errors }}
+      {% else %}
+        <label>
+          {{ field.label }}
+          {{ field }}
+          {{ field.errors }}
+        </label>
+      {% endif %}
+    {% endfor %}
+    <button class="btn btn-gold" type="submit">{% if join_role == 'lady' %}Continue{% else %}Create account{% endif %}</button>
+  </form>
+</section>
+{% endblock %}

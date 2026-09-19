@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Chat {{ profile.public_name }}{% endblock %}
+{% block content %}
+<section class="chat">
+  <h1>{{ profile.public_name }}</h1>
+  <div class="bubbles">
+    {% for msg in chat %}
+      <p class="bubble {% if msg.sender_id == user.id %}mine{% endif %}">
+        <span>{{ msg.body }}</span>
+        <small>{{ msg.sender.get_display_label }} · {{ msg.created_at|date:"j M H:i" }}</small>
+      </p>
+    {% empty %}
+      <p>Start the conversation.</p>
+    {% endfor %}
+  </div>
+  <form method="post" class="stack">
+    {% csrf_token %}
+    {{ form.body }}
+    {{ form.body.errors }}
+    <button class="btn btn-gold" type="submit">Send</button>
+  </form>
+</section>
+{% endblock %}

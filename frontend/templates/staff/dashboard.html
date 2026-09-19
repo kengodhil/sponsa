@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Control room{% endblock %}
+{% block content %}
+<section>
+  <h1>Admin control</h1>
+  <p class="lead">Ladies, sponsor men, payments and live profiles.</p>
+  <div class="btn-row">
+    <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">Add one sponsor</a>
+    <a class="btn btn-dark" href="{% url 'staff:csv_upload' %}">Upload CSV</a>
+    <a class="btn btn-dark" href="/django-admin/">Django admin</a>
+  </div>
+
+  <h2>Ladies</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Number</th><th>Name</th><th>City</th><th>Age</th><th>Preference</th></tr></thead>
+      <tbody>
+        {% for person in ladies %}
+          <tr>
+            <td><a href="{% url 'staff:user_detail' person.pk %}">{{ person.phone }}</a></td>
+            <td>{{ person.display_name }}</td>
+            <td>{{ person.city }}</td>
+            <td>{{ person.age }}</td>
+            <td>{{ person.looking_for }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">None yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Sponsor men accounts</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Number</th><th>Name</th><th>City</th><th>Age</th></tr></thead>
+      <tbody>
+        {% for person in men %}
+          <tr>
+            <td><a href="{% url 'staff:user_detail' person.pk %}">{{ person.phone }}</a></td>
+            <td>{{ person.display_name }}</td>
+            <td>{{ person.city }}</td>
+            <td>{{ person.age }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">None yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Sponsor profiles</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Age</th><th>City</th><th>Status</th><th>Owner number</th></tr></thead>
+      <tbody>
+        {% for profile in profiles %}
+          <tr>
+            <td><a href="{% url 'staff:edit_profile' profile.pk %}">{{ profile.public_name }}</a></td>
+            <td>{{ profile.age }}</td>
+            <td>{{ profile.city }}</td>
+            <td>{{ profile.status }}</td>
+            <td>{{ profile.owner.phone|default:"admin uploaded" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

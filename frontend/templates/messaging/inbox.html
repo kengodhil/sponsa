@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Inbox{% endblock %}
+{% block content %}
+<section>
+  <h1>Inbox</h1>
+  {% if mode == 'lady' %}
+    {% for item in unlocks %}
+      <a class="row-link" href="{% url 'messaging:thread' item.sponsor.pk %}">
+        <img class="inbox-photo" src="{{ item.sponsor.card_photo }}" alt="{{ item.sponsor.public_name }}">
+        <span>
+          <strong>{{ item.sponsor.public_name }}</strong>
+          <span>{{ item.sponsor.city }}</span>
+        </span>
+      </a>
+    {% empty %}
+      <p>No chats yet. Open a sponsor and pay to message.</p>
+    {% endfor %}
+  {% else %}
+    {% for lady in ladies %}
+      <div class="row-link">
+        <strong>{{ lady.name }}</strong>
+        <span>{{ lady.phone }}</span>
+      </div>
+    {% empty %}
+      <p>No ladies have messaged you yet.</p>
+    {% endfor %}
+  {% endif %}
+</section>
+{% endblock %}

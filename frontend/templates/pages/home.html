@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block body_class %}home{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="kicker">Tanzania · 18+</p>
+  <h1>Meet sponsor men.<br>Enter with your number. Pay. Chat.</h1>
+  <p class="lead">Ladies enter with a mobile number, view sponsor photos, then pay <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> to open the full profile and message him.</p>
+  <div class="choice-grid">
+    <a class="choice choice-lady" href="{% url 'accounts:join_lady' %}">
+      <span class="choice-tag">Lady</span>
+      <strong>Enter with mobile number</strong>
+      <em>View men · pay · message</em>
+    </a>
+    <a class="choice choice-man" href="{% url 'accounts:join_sponsor' %}">
+      <span class="choice-tag">Sponsor man</span>
+      <strong>Post your profile</strong>
+      <em>Photo, city, then listing fee</em>
+    </a>
+  </div>
+  <p class="meta">{{ live_count }} sponsor {{ live_count|pluralize:"profile,profiles" }} live now.</p>
+  <p class="tiny">Staff or returning sponsor? <a href="{% url 'accounts:login' %}">Login</a></p>
+</section>
+{% endblock %}

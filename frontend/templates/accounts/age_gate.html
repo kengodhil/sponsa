@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}18+{% endblock %}
+{% block content %}
+<section class="card gate">
+  <h1>Adults only</h1>
+  <p>You must be 18 or older to use this site.</p>
+  <form method="post">
+    {% csrf_token %}
+    <label class="check">
+      <input type="checkbox" name="is_adult" required>
+      I am 18 or older
+    </label>
+    <button class="btn btn-gold" type="submit">Enter</button>
+  </form>
+</section>
+{% endblock %}

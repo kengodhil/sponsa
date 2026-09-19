@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ person.phone }}{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>{{ person.get_display_label }}</h1>
+  <p>Role: {{ person.get_role_display }}</p>
+  <p>Number: <strong>{{ person.phone }}</strong></p>
+  <p>City: {{ person.city }} · Age: {{ person.age }}</p>
+  <p>Preference: {{ person.looking_for }}</p>
+  <p>Joined: {{ person.date_joined }}</p>
+</section>
+{% endblock %}
