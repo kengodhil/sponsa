@@ -32,8 +32,14 @@ Deploy on Render (recommended)
 1. Push this repo and create a Blueprint from render.yaml.
 2. Set DJANGO_ALLOWED_HOSTS to your onrender.com host.
 3. Set CSRF_TRUSTED_ORIGINS and PUBLIC_BASE_URL to https://YOUR-APP.onrender.com
-4. Run `python backend/manage.py seed_demo` once from the Render shell if you want sample men.
-5. When going live, paste Selcom keys and set SELCOM_SANDBOX=False.
+4. Set **Start Command** (Settings — required if the service was created by hand, not from the Blueprint):
+
+   python backend/manage.py migrate --noinput && gunicorn --chdir backend config.wsgi:application
+
+   Do **not** run migrate in the Build Command. Render's internal Postgres host is not reachable while the image is building, which is what caused `relation "sponsors_sponsorprofile" does not exist`.
+5. Set DJANGO_DEBUG=False.
+6. Run `python backend/manage.py seed_demo` once from the Render shell if you want sample men.
+7. When going live, paste Selcom keys and set SELCOM_SANDBOX=False.
 
 Vercel
 ------
