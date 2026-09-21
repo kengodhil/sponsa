@@ -3,11 +3,13 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.static import serve
 
+from apps.accounts.forms import PhoneAuthForm
 from apps.sponsors.views import home
 
 admin.site.site_header = "Sponsa control room"
 admin.site.site_title = "Sponsa admin"
 admin.site.index_title = "Users, numbers and sponsor profiles"
+admin.site.login_form = PhoneAuthForm
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
