@@ -21,4 +21,24 @@
   <p class="meta">{{ live_count }} sponsor {{ live_count|pluralize:"profile,profiles" }} live now.</p>
   <p class="tiny">Staff or returning sponsor? <a href="{% url 'accounts:login' %}">Login</a></p>
 </section>
+
+{% if featured %}
+<section>
+  <h2>Live now</h2>
+  <div class="man-grid">
+    {% for profile in featured %}
+      <article class="man-card" style="--accent: {{ profile.accent }}">
+        <div class="man-photo-wrap">
+          <img class="man-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+          <div class="avatar" hidden>{{ profile.initials }}</div>
+        </div>
+        <h2>{{ profile.public_name }}</h2>
+        <p class="chips"><span>{{ profile.age }} yrs</span><span>{{ profile.city }}</span></p>
+        <p>{{ profile.teaser }}</p>
+        <a class="btn btn-gold" href="{% url 'accounts:join_lady' %}">Enter to view</a>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 {% endblock %}
