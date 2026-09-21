@@ -107,6 +107,11 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+# WhiteNoise only scans STATICFILES_DIRS when this is True. It defaults to
+# DEBUG, so CSS/JS 404 as soon as DEBUG is off and collectstatic was skipped.
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
+WHITENOISE_MANIFEST_STRICT = False
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
