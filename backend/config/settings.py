@@ -19,7 +19,9 @@ def env_bool(name, default=False):
 
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key-change-me")
-DEBUG = env_bool("DJANGO_DEBUG", True)
+# Render sets RENDER=true. Default DEBUG off there so the yellow error page
+# cannot leak settings. Override with DJANGO_DEBUG=True if you need it.
+DEBUG = env_bool("DJANGO_DEBUG", default=not bool(os.getenv("RENDER")))
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com,.vercel.app").split(",")
@@ -118,7 +120,7 @@ SELCOM_VENDOR = os.getenv("SELCOM_VENDOR", "")
 SELCOM_SANDBOX = env_bool("SELCOM_SANDBOX", True)
 PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "http://127.0.0.1:8000")
 
-if not DEBUG:
+if os.getenv("RENDER") or not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
