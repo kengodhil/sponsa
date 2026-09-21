@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 from .models import CITY_CHOICES, User
 from .phone import normalize_tz_phone, phone_is_valid
 
+DEMO_ADMIN_ALIASES = {"admin", "staff", "administrator"}
+DEMO_ADMIN_PHONE = "255700000001"
+
 
 class AdultConfirmForm(forms.Form):
     is_adult = forms.BooleanField(
@@ -18,7 +21,7 @@ class PhoneAuthForm(AuthenticationForm):
         label="Mobile number",
         widget=forms.TextInput(
             attrs={
-                "placeholder": "07XXXXXXXX",
+                "placeholder": "07XXXXXXXX or admin",
                 "inputmode": "tel",
                 "autocomplete": "tel",
             }
@@ -26,7 +29,10 @@ class PhoneAuthForm(AuthenticationForm):
     )
 
     def clean_username(self):
-        phone = normalize_tz_phone(self.cleaned_data["username"])
+        raw = (self.cleaned_data.get("username") or "").strip()
+        if raw.lower() in DEMO_ADMIN_ALIASES:
+            return DEMO_ADMIN_PHONE
+        phone = normalize_tz_phone(raw)
         if not phone_is_valid(phone):
             raise ValidationError("Enter a valid Tanzania mobile number.")
         return phone
