@@ -3,7 +3,7 @@
 {% block content %}
 <section class="card">
   <h1>Login</h1>
-  <p class="lead">Sponsors and staff use the number and password from registration.</p>
+  <p class="lead">Use the Tanzania mobile number, not an email. Staff can type <strong>admin</strong>.</p>
   <form method="post" class="stack">
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -16,6 +16,8 @@
     {% endfor %}
     <button class="btn btn-gold" type="submit">Login</button>
   </form>
+  <p class="tiny">Demo staff: <strong>admin</strong> or <strong>255700000001</strong> / <strong>AdminPass123</strong></p>
+  <p class="tiny">Demo sponsor: <strong>255713000003</strong> / <strong>ManPass123</strong></p>
   <p class="tiny">Ladies enter with a number only. <a href="{% url 'accounts:join_lady' %}">Enter here</a>.</p>
 </section>
 {% endblock %}

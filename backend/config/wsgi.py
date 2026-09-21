@@ -12,5 +12,7 @@ if os.environ.get("SKIP_MIGRATE_ON_BOOT", "").strip().lower() not in skip:
     call_command("migrate", interactive=False, verbosity=1)
 if os.environ.get("SKIP_COLLECTSTATIC_ON_BOOT", "").strip().lower() not in skip:
     call_command("collectstatic", interactive=False, verbosity=1)
+if os.environ.get("SKIP_SEED_DEMO", "").strip().lower() not in skip:
+    call_command("seed_demo", verbosity=1)
 
 application = get_wsgi_application()

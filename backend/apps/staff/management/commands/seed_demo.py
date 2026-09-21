@@ -1,3 +1,7 @@
+from pathlib import Path
+
+from django.conf import settings
+from django.core.files import File
 from django.core.management.base import BaseCommand
 
 from apps.accounts.models import User
@@ -68,11 +72,28 @@ DEMO_MEN = [
 ]
 
 
+def _photo_path(public_name):
+    key = (public_name.split() or ["sponsor"])[0].lower()
+    return Path(settings.FRONTEND_DIR) / "static" / "img" / "sponsors" / f"{key}.jpg"
+
+
+def _attach_photo(profile, public_name):
+    src = _photo_path(public_name)
+    if not src.exists():
+        return
+    missing = not profile.photo or not profile.photo.storage.exists(profile.photo.name)
+    if not missing:
+        return
+    key = src.name
+    with src.open("rb") as fh:
+        profile.photo.save(key, File(fh), save=True)
+
+
 class Command(BaseCommand):
     help = "Create demo admin, a lady, a paying sponsor, and live sponsor cards with photos."
 
     def handle(self, *args, **options):
-        admin, created = User.objects.get_or_create(
+        admin, _created = User.objects.get_or_create(
             phone="255700000001",
             defaults={
                 "display_name": "Site Admin",
@@ -85,8 +106,11 @@ class Command(BaseCommand):
             },
         )
         admin.set_password("AdminPass123")
+        admin.role = User.Role.ADMIN
         admin.is_staff = True
         admin.is_superuser = True
+        admin.is_adult_confirmed = True
+        admin.is_active = True
         admin.save()
 
         lady, _ = User.objects.get_or_create(
@@ -101,6 +125,7 @@ class Command(BaseCommand):
             },
         )
         lady.set_password("LadyPass123")
+        lady.is_adult_confirmed = True
         lady.save()
 
         man, _ = User.objects.get_or_create(
@@ -115,19 +140,37 @@ class Command(BaseCommand):
             },
         )
         man.set_password("ManPass123")
+        man.role = User.Role.SPONSOR
+        man.is_adult_confirmed = True
         man.save()
 
         for row in DEMO_MEN:
+            defaults = {
+                **row,
+                "status": SponsorProfile.Status.LIVE,
+                "owner": man if row["public_name"] == "Hassan M." else None,
+            }
             profile, made = SponsorProfile.objects.get_or_create(
                 public_name=row["public_name"],
                 city=row["city"],
-                defaults={**row, "status": SponsorProfile.Status.LIVE, "owner": man if row["public_name"] == "Hassan M." else None},
+                defaults=defaults,
             )
-            if not made and profile.status != SponsorProfile.Status.LIVE:
+            changed = []
+            for field, value in row.items():
+                if getattr(profile, field) != value:
+                    setattr(profile, field, value)
+                    changed.append(field)
+            if profile.status != SponsorProfile.Status.LIVE:
                 profile.status = SponsorProfile.Status.LIVE
-                profile.save(update_fields=["status"])
+                changed.append("status")
+            if row["public_name"] == "Hassan M." and profile.owner_id != man.id:
+                profile.owner = man
+                changed.append("owner")
+            if changed:
+                profile.save(update_fields=list(dict.fromkeys(changed + ["updated_at"])))
+            _attach_photo(profile, row["public_name"])
 
         self.stdout.write(self.style.SUCCESS("Demo users ready."))
-        self.stdout.write("Admin  255700000001 / AdminPass123")
+        self.stdout.write("Admin  255700000001 / AdminPass123  (or login as admin)")
         self.stdout.write("Lady   255712000002 / LadyPass123")
         self.stdout.write("Man    255713000003 / ManPass123")

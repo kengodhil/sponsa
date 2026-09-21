@@ -11,8 +11,15 @@ from .models import SponsorProfile, Unlock
 
 
 def home(request):
-    live_count = SponsorProfile.objects.filter(status=SponsorProfile.Status.LIVE).count()
-    return render(request, "pages/home.html", {"live_count": live_count})
+    live = SponsorProfile.objects.filter(status=SponsorProfile.Status.LIVE)
+    return render(
+        request,
+        "pages/home.html",
+        {
+            "live_count": live.count(),
+            "featured": live[:6],
+        },
+    )
 
 
 @adult_required
