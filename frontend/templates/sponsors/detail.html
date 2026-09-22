@@ -7,23 +7,23 @@
     <div class="avatar xl" hidden>{{ profile.initials }}</div>
   </div>
   <h1>{{ profile.public_name }}</h1>
-  <p class="chips"><span>{{ profile.age }} years</span><span>{{ profile.city }}</span><span>{{ profile.lifestyle }}</span></p>
+  <p class="chips"><span>{{ profile.age }} miaka</span><span>{{ profile.city }}</span><span>{{ profile.lifestyle }}</span></p>
 
   {% if unlocked %}
     <div class="full">
-      <h2>Full profile</h2>
+      <h2>Wasifu kamili</h2>
       <p>{{ profile.full_bio }}</p>
-      <p class="pref">Preference: {{ profile.preference }}</p>
-      <a class="btn btn-gold" href="{% url 'messaging:thread' profile.pk %}">Open chat</a>
+      <p class="pref">Mapendeleo: {{ profile.preference }}</p>
+      <a class="btn btn-gold" href="{% url 'messaging:thread' profile.pk %}">Fungua mazungumzo</a>
     </div>
   {% else %}
     <p class="teaser">{{ profile.teaser }}</p>
-    <p class="lock-note">Pay <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> from <strong>{{ user.phone }}</strong> to see the full profile and start chat. This fee is for this man only.</p>
+    <p class="lock-note">Lipa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> kutoka <strong>{{ user.phone }}</strong> ili kuona wasifu kamili na kuanza kuandika. Ada hii ni kwa mtu huyu tu.</p>
     <form method="post" action="{% url 'payments:unlock' profile.pk %}">
       {% csrf_token %}
       <button class="shine" type="submit">
         <span class="shine-glow"></span>
-        DM me
+        Nitumie ujumbe
       </button>
     </form>
   {% endif %}
