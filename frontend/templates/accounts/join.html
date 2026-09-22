@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block title %}{% if join_role == 'lady' %}Enter{% else %}Join{% endif %}{% endblock %}
+{% block title %}{% if join_role == 'lady' %}Ingia{% else %}Jiunge{% endif %}{% endblock %}
 {% block content %}
 <section class="card">
   {% if join_role == 'lady' %}
-    <h1>Enter with your number</h1>
-    <p class="lead">Use a Tanzania mobile number. You will see sponsor photos next.</p>
+    <h1>Ingia kwa nambari yako</h1>
+    <p class="lead">Tumia nambari ya simu ya Tanzania. Utaziona picha za wafadhili baadaye.</p>
   {% else %}
-    <h1>Sponsor man join</h1>
-    <p class="lead">Create an account, add your photo and profile, then pay to go live.</p>
+    <h1>Jiunge kama mfadhili</h1>
+    <p class="lead">Unda akaunti, ongeza picha na wasifu, kisha lipa ili uonekane.</p>
   {% endif %}
   <form method="post" class="stack">
     {% csrf_token %}
@@ -27,7 +27,7 @@
         </label>
       {% endif %}
     {% endfor %}
-    <button class="btn btn-gold" type="submit">{% if join_role == 'lady' %}Continue{% else %}Create account{% endif %}</button>
+    <button class="btn btn-gold" type="submit">{% if join_role == 'lady' %}Endelea{% else %}Unda akaunti{% endif %}</button>
   </form>
 </section>
 {% endblock %}
