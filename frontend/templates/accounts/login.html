@@ -3,7 +3,7 @@
 {% block content %}
 <section class="card">
   <h1>Login</h1>
-  <p class="lead">Tumia nambari ya simu ya Tanzania.</p>
+  <p class="lead">Tumia namba ya simu ya Tanzania.</p>
   <form method="post" class="stack">
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -16,6 +16,6 @@
     {% endfor %}
     <button class="btn btn-gold" type="submit">Ingia</button>
   </form>
-  <p class="tiny">Mwanamke? Ingia kwa nambari pekee. <a href="{% url 'accounts:join_lady' %}">Ingia hapa</a>.</p>
+  <p class="tiny">Mwanamke? Ingia kwa namba pekee. <a href="{% url 'accounts:join_lady' %}">Ingia hapa</a>.</p>
 </section>
 {% endblock %}
