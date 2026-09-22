@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% block title %}My sponsor card{% endblock %}
+{% block title %}Kadi yangu{% endblock %}
 {% block content %}
 <section class="card">
-  <h1>Your sponsor card</h1>
+  <h1>Kadi yako ya mfadhili</h1>
   {% if not profile %}
-    <p>Add your photo and profile first.</p>
-    <a class="btn btn-gold" href="{% url 'sponsors:edit_listing' %}">Create profile</a>
+    <p>Ongeza picha na wasifu kwanza.</p>
+    <a class="btn btn-gold" href="{% url 'sponsors:edit_listing' %}">Unda wasifu</a>
   {% else %}
     <div class="man-photo-wrap">
       <img class="man-photo detail-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'">
     </div>
-    <p class="chips"><span>{{ profile.get_status_display }}</span><span>{{ profile.city }}</span><span>{{ profile.age }} yrs</span></p>
+    <p class="chips"><span>{{ profile.get_status_display }}</span><span>{{ profile.city }}</span><span>{{ profile.age }} miaka</span></p>
     <p>{{ profile.teaser }}</p>
     <div class="btn-row">
-      <a class="btn btn-dark" href="{% url 'sponsors:edit_listing' %}">Edit profile</a>
+      <a class="btn btn-dark" href="{% url 'sponsors:edit_listing' %}">Hariri wasifu</a>
       {% if profile.status != 'live' %}
         <form method="post" action="{% url 'payments:listing' %}">
           {% csrf_token %}
-          <button class="btn btn-gold" type="submit">Pay {{ listing_fee|floatformat:0 }} TZS to go live</button>
+          <button class="btn btn-gold" type="submit">Lipa {{ listing_fee|floatformat:0 }} TZS ili uonekane</button>
         </form>
       {% else %}
-        <p class="ok">You are live. Ladies can view your card.</p>
+        <p class="ok">Uko hai. Wanawake wanaweza kuona kadi yako.</p>
       {% endif %}
     </div>
   {% endif %}
