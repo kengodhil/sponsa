@@ -4,22 +4,22 @@
 {% block content %}
 <section class="hero">
   <p class="kicker">Tanzania · Miaka 18+</p>
-  <h1>Kutana na wanaume wafadhili.<br>Ingia na nambari yako. Lipa. Ongea.</h1>
-  <p class="lead">Wanawake huingia kwa nambari ya simu, wanaona picha za wafadhili, kisha hulipa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> ili kufungua wasifu kamili na kuandika ujumbe.</p>
+  <h1>Kutana na sponsa.<br>Ingia na namba yako. Lipa. Ongea.</h1>
+  <p class="lead">Wanawake huingia kwa namba ya simu, wanaona picha za sponsa, kisha hulipa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> ili kufungua wasifu kamili na kuandika ujumbe.</p>
   <div class="choice-grid">
     <a class="choice choice-lady" href="{% url 'accounts:join_lady' %}">
       <span class="choice-tag">Mwanamke</span>
-      <strong>Ingia kwa nambari ya simu</strong>
+      <strong>Ingia kwa namba ya simu</strong>
       <em>Angalia wanaume · lipa · ongea</em>
     </a>
     <a class="choice choice-man" href="{% url 'accounts:join_sponsor' %}">
-      <span class="choice-tag">Mwanaume mfadhili</span>
-      <strong>Chapisha wasifu wako</strong>
+      <span class="choice-tag">Mwanaume sponsa</span>
+      <strong>Chapisha profile yako</strong>
       <em>Picha, jiji, kisha ada ya kuweka</em>
     </a>
   </div>
-  <p class="meta">{{ live_count }} wasifu {{ live_count|pluralize:"hai,hai" }} sasa.</p>
-  <p class="tiny">Staff au mfadhili anayerudi? <a href="{% url 'accounts:login' %}">Login</a></p>
+  <p class="meta">{{ live_count }} live profile{{ live_count|pluralize }}.</p>
+  <p class="tiny">Staff au sponsa anayerudi? <a href="{% url 'accounts:login' %}">Login</a></p>
 </section>
 
 {% if featured %}
