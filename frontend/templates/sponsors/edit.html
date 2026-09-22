@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Edit card{% endblock %}
+{% block title %}Hariri kadi{% endblock %}
 {% block content %}
 <section class="card">
-  <h1>Sponsor profile</h1>
-  <p class="lead">Ladies see your photo, city, age and intro before they pay. Full bio opens after payment.</p>
+  <h1>Wasifu wa mfadhili</h1>
+  <p class="lead">Wanawake wanaona picha, jiji, umri na utangulizi kabla ya kulipa. Wasifu kamili hufunguliwa baada ya malipo.</p>
   <form method="post" enctype="multipart/form-data" class="stack">
     {% csrf_token %}
     {% for field in form %}
@@ -13,7 +13,7 @@
         {{ field.errors }}
       </label>
     {% endfor %}
-    <button class="btn btn-gold" type="submit">Save profile</button>
+    <button class="btn btn-gold" type="submit">Hifadhi wasifu</button>
   </form>
 </section>
 {% endblock %}
