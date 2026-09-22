@@ -1,30 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Nyumbani{% endblock %}
 {% block body_class %}home{% endblock %}
 {% block content %}
 <section class="hero">
-  <p class="kicker">Tanzania · 18+</p>
-  <h1>Meet sponsor men.<br>Enter with your number. Pay. Chat.</h1>
-  <p class="lead">Ladies enter with a mobile number, view sponsor photos, then pay <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> to open the full profile and message him.</p>
+  <p class="kicker">Tanzania · Miaka 18+</p>
+  <h1>Kutana na wanaume wafadhili.<br>Ingia na nambari yako. Lipa. Ongea.</h1>
+  <p class="lead">Wanawake huingia kwa nambari ya simu, wanaona picha za wafadhili, kisha hulipa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> ili kufungua wasifu kamili na kuandika ujumbe.</p>
   <div class="choice-grid">
     <a class="choice choice-lady" href="{% url 'accounts:join_lady' %}">
-      <span class="choice-tag">Lady</span>
-      <strong>Enter with mobile number</strong>
-      <em>View men · pay · message</em>
+      <span class="choice-tag">Mwanamke</span>
+      <strong>Ingia kwa nambari ya simu</strong>
+      <em>Angalia wanaume · lipa · ongea</em>
     </a>
     <a class="choice choice-man" href="{% url 'accounts:join_sponsor' %}">
-      <span class="choice-tag">Sponsor man</span>
-      <strong>Post your profile</strong>
-      <em>Photo, city, then listing fee</em>
+      <span class="choice-tag">Mwanaume mfadhili</span>
+      <strong>Chapisha wasifu wako</strong>
+      <em>Picha, jiji, kisha ada ya kuweka</em>
     </a>
   </div>
-  <p class="meta">{{ live_count }} sponsor {{ live_count|pluralize:"profile,profiles" }} live now.</p>
-  <p class="tiny">Staff or returning sponsor? <a href="{% url 'accounts:login' %}">Login</a></p>
+  <p class="meta">{{ live_count }} wasifu {{ live_count|pluralize:"hai,hai" }} sasa.</p>
+  <p class="tiny">Staff au mfadhili anayerudi? <a href="{% url 'accounts:login' %}">Login</a></p>
 </section>
 
 {% if featured %}
 <section>
-  <h2>Live now</h2>
+  <h2>Wanaoonekana sasa</h2>
   <div class="man-grid">
     {% for profile in featured %}
       <article class="man-card" style="--accent: {{ profile.accent }}">
@@ -33,9 +33,9 @@
           <div class="avatar" hidden>{{ profile.initials }}</div>
         </div>
         <h2>{{ profile.public_name }}</h2>
-        <p class="chips"><span>{{ profile.age }} yrs</span><span>{{ profile.city }}</span></p>
+        <p class="chips"><span>{{ profile.age }} miaka</span><span>{{ profile.city }}</span></p>
         <p>{{ profile.teaser }}</p>
-        <a class="btn btn-gold" href="{% url 'accounts:join_lady' %}">Enter to view</a>
+        <a class="btn btn-gold" href="{% url 'accounts:join_lady' %}">Ingia kuona</a>
       </article>
     {% endfor %}
   </div>
