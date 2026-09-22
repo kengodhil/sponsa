@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}18+{% endblock %}
+{% block title %}Miaka 18+{% endblock %}
 {% block content %}
 <section class="card gate">
-  <h1>Adults only</h1>
-  <p>You must be 18 or older to use this site.</p>
+  <h1>Watu wazima pekee</h1>
+  <p>Lazima uwe na umri wa miaka 18 au zaidi kutumia tovuti hii.</p>
   <form method="post">
     {% csrf_token %}
     <label class="check">
       <input type="checkbox" name="is_adult" required>
-      I am 18 or older
+      Nina umri wa miaka 18 au zaidi
     </label>
-    <button class="btn btn-gold" type="submit">Enter</button>
+    <button class="btn btn-gold" type="submit">Ingia</button>
   </form>
 </section>
 {% endblock %}
