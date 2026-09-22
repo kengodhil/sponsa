@@ -18,7 +18,7 @@ class AdultConfirmForm(forms.Form):
 
 class PhoneAuthForm(AuthenticationForm):
     username = forms.CharField(
-        label="Nambari ya simu",
+        label="Namba ya simu",
         widget=forms.TextInput(
             attrs={
                 "placeholder": "07XXXXXXXX",
@@ -34,13 +34,13 @@ class PhoneAuthForm(AuthenticationForm):
             return DEMO_ADMIN_PHONE
         phone = normalize_tz_phone(raw)
         if not phone_is_valid(phone):
-            raise ValidationError("Weka nambari sahihi ya simu ya Tanzania.")
+            raise ValidationError("Weka namba sahihi ya simu ya Tanzania.")
         return phone
 
 
 class BaseJoinForm(UserCreationForm):
     phone = forms.CharField(
-        label="Nambari ya simu",
+        label="Namba ya simu",
         widget=forms.TextInput(attrs={"placeholder": "07XXXXXXXX", "inputmode": "tel"}),
     )
     display_name = forms.CharField(label="Jina la kuonyesha", max_length=80)
@@ -60,9 +60,9 @@ class BaseJoinForm(UserCreationForm):
     def clean_phone(self):
         phone = normalize_tz_phone(self.cleaned_data["phone"])
         if not phone_is_valid(phone):
-            raise ValidationError("Weka nambari sahihi ya simu ya Tanzania (Vodacom, Airtel, Tigo, Yas, Halotel).")
+            raise ValidationError("Weka namba sahihi ya simu ya Tanzania (Vodacom, Airtel, Tigo, Yas, Halotel).")
         if User.objects.filter(phone=phone).exists():
-            raise ValidationError("Nambari hii tayari imesajiliwa.")
+            raise ValidationError("Namba hii tayari imesajiliwa.")
         return phone
 
     def clean_age(self):
@@ -74,7 +74,7 @@ class BaseJoinForm(UserCreationForm):
 
 class LadyEnterForm(forms.Form):
     phone = forms.CharField(
-        label="Nambari ya simu",
+        label="Namba ya simu",
         widget=forms.TextInput(
             attrs={
                 "placeholder": "07XXXXXXXX",
@@ -88,13 +88,13 @@ class LadyEnterForm(forms.Form):
     def clean_phone(self):
         phone = normalize_tz_phone(self.cleaned_data["phone"])
         if not phone_is_valid(phone):
-            raise ValidationError("Weka nambari sahihi ya simu ya Tanzania.")
+            raise ValidationError("Weka namba sahihi ya simu ya Tanzania.")
         return phone
 
 
 class LadyJoinForm(BaseJoinForm):
     looking_for = forms.CharField(
-        label="Mapendeleo ya mfadhili",
+        label="Mapendeleo ya sponsa",
         required=False,
         widget=forms.TextInput(attrs={"placeholder": "mf. 40+, Dar, kusafiri"}),
     )
