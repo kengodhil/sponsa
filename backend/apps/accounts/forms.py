@@ -12,16 +12,16 @@ DEMO_ADMIN_PHONE = "255700000001"
 class AdultConfirmForm(forms.Form):
     is_adult = forms.BooleanField(
         required=True,
-        label="I confirm I am 18 years or older",
+        label="Ninathibitisha nina umri wa miaka 18 au zaidi",
     )
 
 
 class PhoneAuthForm(AuthenticationForm):
     username = forms.CharField(
-        label="Mobile number",
+        label="Nambari ya simu",
         widget=forms.TextInput(
             attrs={
-                "placeholder": "07XXXXXXXX or admin",
+                "placeholder": "07XXXXXXXX",
                 "inputmode": "tel",
                 "autocomplete": "tel",
             }
@@ -34,24 +34,24 @@ class PhoneAuthForm(AuthenticationForm):
             return DEMO_ADMIN_PHONE
         phone = normalize_tz_phone(raw)
         if not phone_is_valid(phone):
-            raise ValidationError("Enter a valid Tanzania mobile number.")
+            raise ValidationError("Weka nambari sahihi ya simu ya Tanzania.")
         return phone
 
 
 class BaseJoinForm(UserCreationForm):
     phone = forms.CharField(
-        label="Mobile number",
+        label="Nambari ya simu",
         widget=forms.TextInput(attrs={"placeholder": "07XXXXXXXX", "inputmode": "tel"}),
     )
-    display_name = forms.CharField(label="Name to show", max_length=80)
-    city = forms.ChoiceField(choices=CITY_CHOICES)
-    age = forms.IntegerField(min_value=18, max_value=80)
+    display_name = forms.CharField(label="Jina la kuonyesha", max_length=80)
+    city = forms.ChoiceField(choices=CITY_CHOICES, label="Jiji")
+    age = forms.IntegerField(min_value=18, max_value=80, label="Umri")
     looking_for = forms.CharField(
-        label="What you prefer",
+        label="Unachotafuta",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "Age, city, lifestyle"}),
+        widget=forms.TextInput(attrs={"placeholder": "Umri, jiji, maisha"}),
     )
-    is_adult_confirmed = forms.BooleanField(label="I am 18+ and join by choice")
+    is_adult_confirmed = forms.BooleanField(label="Nina umri wa miaka 18+ na najiunga kwa hiari")
 
     class Meta:
         model = User
@@ -60,21 +60,21 @@ class BaseJoinForm(UserCreationForm):
     def clean_phone(self):
         phone = normalize_tz_phone(self.cleaned_data["phone"])
         if not phone_is_valid(phone):
-            raise ValidationError("Enter a valid Tanzania mobile number (Vodacom, Airtel, Tigo, Yas, Halotel).")
+            raise ValidationError("Weka nambari sahihi ya simu ya Tanzania (Vodacom, Airtel, Tigo, Yas, Halotel).")
         if User.objects.filter(phone=phone).exists():
-            raise ValidationError("This number is already registered.")
+            raise ValidationError("Nambari hii tayari imesajiliwa.")
         return phone
 
     def clean_age(self):
         age = self.cleaned_data["age"]
         if age < 18:
-            raise ValidationError("Only adults 18 years and above can join.")
+            raise ValidationError("Ni watu wazima wa miaka 18 na kuendelea tu wanaoweza kujiunga.")
         return age
 
 
 class LadyEnterForm(forms.Form):
     phone = forms.CharField(
-        label="Mobile number",
+        label="Nambari ya simu",
         widget=forms.TextInput(
             attrs={
                 "placeholder": "07XXXXXXXX",
@@ -83,26 +83,26 @@ class LadyEnterForm(forms.Form):
             }
         ),
     )
-    is_adult_confirmed = forms.BooleanField(label="I am 18 or older")
+    is_adult_confirmed = forms.BooleanField(label="Nina umri wa miaka 18 au zaidi")
 
     def clean_phone(self):
         phone = normalize_tz_phone(self.cleaned_data["phone"])
         if not phone_is_valid(phone):
-            raise ValidationError("Enter a valid Tanzania mobile number.")
+            raise ValidationError("Weka nambari sahihi ya simu ya Tanzania.")
         return phone
 
 
 class LadyJoinForm(BaseJoinForm):
     looking_for = forms.CharField(
-        label="Sponsor preference",
+        label="Mapendeleo ya mfadhili",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "e.g. 40+, Dar, travel"}),
+        widget=forms.TextInput(attrs={"placeholder": "mf. 40+, Dar, kusafiri"}),
     )
 
 
 class SponsorJoinForm(BaseJoinForm):
     looking_for = forms.CharField(
-        label="Lady preference",
+        label="Mapendeleo ya mwanamke",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "e.g. 21-32, same city"}),
+        widget=forms.TextInput(attrs={"placeholder": "mf. 21-32, jiji moja"}),
     )
