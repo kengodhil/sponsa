@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Sponsors{% endblock %}
+{% block title %}Wafadhili{% endblock %}
 {% block content %}
 <section>
-  <h1>Sponsor men</h1>
-  <p class="lead">Photos and city first. Pay to open the full profile and chat.</p>
+  <h1>Wanaume wafadhili</h1>
+  <p class="lead">Picha na jiji kwanza. Lipa ili kufungua wasifu kamili na kuzungumza.</p>
   <form method="get" class="filters">
-    <label>City {{ form.city }}</label>
-    <label>Min age {{ form.min_age }}</label>
-    <label>Max age {{ form.max_age }}</label>
-    <label>Preference {{ form.preference }}</label>
-    <button class="btn btn-dark" type="submit">Show matches</button>
+    <label>Jiji {{ form.city }}</label>
+    <label>Umri mdogo {{ form.min_age }}</label>
+    <label>Umri mkubwa {{ form.max_age }}</label>
+    <label>Mapendeleo {{ form.preference }}</label>
+    <button class="btn btn-dark" type="submit">Onyesha</button>
   </form>
 
   <div class="man-grid">
@@ -20,16 +20,16 @@
           <div class="avatar" hidden>{{ profile.initials }}</div>
         </div>
         <h2>{{ profile.public_name }}</h2>
-        <p class="chips"><span>{{ profile.age }} yrs</span><span>{{ profile.city }}</span></p>
+        <p class="chips"><span>{{ profile.age }} miaka</span><span>{{ profile.city }}</span></p>
         <p>{{ profile.teaser }}</p>
         {% if profile.id in unlocked_ids %}
-          <a class="btn btn-dark" href="{% url 'sponsors:detail' profile.pk %}">Open profile</a>
+          <a class="btn btn-dark" href="{% url 'sponsors:detail' profile.pk %}">Fungua wasifu</a>
         {% else %}
-          <a class="btn btn-gold" href="{% url 'sponsors:detail' profile.pk %}">View</a>
+          <a class="btn btn-gold" href="{% url 'sponsors:detail' profile.pk %}">Angalia</a>
         {% endif %}
       </article>
     {% empty %}
-      <p>No live profiles for that filter.</p>
+      <p>Hakuna wasifu unaolingana na chaguo hilo.</p>
     {% endfor %}
   </div>
 </section>
