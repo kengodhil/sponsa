@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Usimamizi{% endblock %}
+{% block title %}Management{% endblock %}
 {% block content %}
 <section>
-  <h1>Usimamizi</h1>
-  <p class="lead">Wanawake, wafadhili, malipo na wasifu hai.</p>
+  <h1>Management</h1>
+  <p class="lead">Wanawake, sponsa, malipo na wasifu hai.</p>
   <div class="btn-row">
-    <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">Ongeza mfadhili</a>
+    <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">Ongeza sponsa</a>
     <a class="btn btn-dark" href="{% url 'staff:csv_upload' %}">Pakia CSV</a>
     <a class="btn btn-dark" href="/django-admin/">Django admin</a>
   </div>
@@ -13,7 +13,7 @@
   <h2>Wanawake</h2>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Nambari</th><th>Jina</th><th>Jiji</th><th>Umri</th><th>Mapendeleo</th></tr></thead>
+      <thead><tr><th>Namba</th><th>Jina</th><th>Jiji</th><th>Umri</th><th>Mapendeleo</th></tr></thead>
       <tbody>
         {% for person in ladies %}
           <tr>
@@ -30,10 +30,10 @@
     </table>
   </div>
 
-  <h2>Akaunti za wafadhili</h2>
+  <h2>Akaunti za sponsa</h2>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Nambari</th><th>Jina</th><th>Jiji</th><th>Umri</th></tr></thead>
+      <thead><tr><th>Namba</th><th>Jina</th><th>Jiji</th><th>Umri</th></tr></thead>
       <tbody>
         {% for person in men %}
           <tr>
@@ -49,10 +49,10 @@
     </table>
   </div>
 
-  <h2>Wasifu wa wafadhili</h2>
+  <h2>Wasifu wa sponsa</h2>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Jina</th><th>Umri</th><th>Jiji</th><th>Hali</th><th>Nambari</th></tr></thead>
+      <thead><tr><th>Jina</th><th>Umri</th><th>Jiji</th><th>Hali</th><th>Namba</th></tr></thead>
       <tbody>
         {% for profile in profiles %}
           <tr>
