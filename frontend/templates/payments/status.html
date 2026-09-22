@@ -4,7 +4,7 @@
 <section class="card pay">
   <h1>Malipo</h1>
   <p class="amount">{{ payment.amount|floatformat:0 }} {{ payment.currency }}</p>
-  <p>Nambari: <strong>{{ payment.msisdn }}</strong></p>
+  <p>Namba: <strong>{{ payment.msisdn }}</strong></p>
   <p class="status-pill status-{{ payment.status }}">{{ payment.get_status_display }}</p>
   {% if payment.selcom_message %}<p>{{ payment.selcom_message }}</p>{% endif %}
 
