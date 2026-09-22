@@ -17,10 +17,10 @@
         {% endif %}
         {% if user.role == 'lady' %}
           <a href="{% url 'sponsors:browse' %}">Wanaume</a>
-          <a href="{% url 'messaging:inbox' %}">Ujumbe</a>
+          <a href="{% url 'messaging:inbox' %}">Messages</a>
         {% elif user.role == 'sponsor' %}
           <a href="{% url 'sponsors:my_listing' %}">Kadi yangu</a>
-          <a href="{% url 'messaging:inbox' %}">Ujumbe</a>
+          <a href="{% url 'messaging:inbox' %}">Messages</a>
         {% endif %}
         <form class="inline" method="post" action="{% url 'accounts:logout' %}">
           {% csrf_token %}
@@ -46,7 +46,7 @@
   </main>
 
   <footer class="foot">
-    <p>Miaka 18+ tu. Wanawake huingia kwa namba ya simu. Fungua wasifu mmoja kwa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong>. Wanaume hulipa {{ listing_fee|floatformat:0 }} TZS ili kuchapishwa.</p>
+    <p>Miaka 18+ tu. Wanawake ingia kwa namba ya simu. Fungua profile za masponsa kwa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong>. Wanaume lipia {{ listing_fee|floatformat:0 }} TZS ili kupostiwa.</p>
   </footer>
   <script src="{% static 'js/app.js' %}"></script>
 </body>
