@@ -11,9 +11,9 @@ class MessageForm(forms.ModelForm):
             "body": forms.Textarea(
                 attrs={
                     "rows": 3,
-                    "placeholder": "Write a clear first message...",
+                    "placeholder": "Andika ujumbe wako wa kwanza...",
                     "maxlength": 1000,
                 }
             )
         }
-        labels = {"body": "Your message"}
+        labels = {"body": "Ujumbe wako"}
