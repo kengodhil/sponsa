@@ -3,10 +3,10 @@
 {% block content %}
 <section class="card">
   <h1>{{ person.get_display_label }}</h1>
-  <p>Role: {{ person.get_role_display }}</p>
-  <p>Number: <strong>{{ person.phone }}</strong></p>
-  <p>City: {{ person.city }} · Age: {{ person.age }}</p>
-  <p>Preference: {{ person.looking_for }}</p>
-  <p>Joined: {{ person.date_joined }}</p>
+  <p>Jukumu: {{ person.get_role_display }}</p>
+  <p>Nambari: <strong>{{ person.phone }}</strong></p>
+  <p>Jiji: {{ person.city }} · Umri: {{ person.age }}</p>
+  <p>Mapendeleo: {{ person.looking_for }}</p>
+  <p>Alijiunga: {{ person.date_joined }}</p>
 </section>
 {% endblock %}
