@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Chat {{ profile.public_name }}{% endblock %}
+{% block title %}Mazungumzo {{ profile.public_name }}{% endblock %}
 {% block content %}
 <section class="chat">
   <h1>{{ profile.public_name }}</h1>
@@ -10,14 +10,14 @@
         <small>{{ msg.sender.get_display_label }} · {{ msg.created_at|date:"j M H:i" }}</small>
       </p>
     {% empty %}
-      <p>Start the conversation.</p>
+      <p>Anza mazungumzo.</p>
     {% endfor %}
   </div>
   <form method="post" class="stack">
     {% csrf_token %}
     {{ form.body }}
     {{ form.body.errors }}
-    <button class="btn btn-gold" type="submit">Send</button>
+    <button class="btn btn-gold" type="submit">Tuma</button>
   </form>
 </section>
 {% endblock %}
