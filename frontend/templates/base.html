@@ -13,7 +13,7 @@
     <nav class="topnav">
       {% if user.is_authenticated %}
         {% if user.is_staff or user.role == 'admin' %}
-          <a href="{% url 'staff:dashboard' %}">Usimamizi</a>
+          <a href="{% url 'staff:dashboard' %}">Management</a>
         {% endif %}
         {% if user.role == 'lady' %}
           <a href="{% url 'sponsors:browse' %}">Wanaume</a>
@@ -46,7 +46,7 @@
   </main>
 
   <footer class="foot">
-    <p>Miaka 18+ tu. Wanawake huingia kwa nambari ya simu. Fungua wasifu mmoja kwa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong>. Wanaume hulipa {{ listing_fee|floatformat:0 }} TZS ili kuchapishwa.</p>
+    <p>Miaka 18+ tu. Wanawake huingia kwa namba ya simu. Fungua wasifu mmoja kwa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong>. Wanaume hulipa {{ listing_fee|floatformat:0 }} TZS ili kuchapishwa.</p>
   </footer>
   <script src="{% static 'js/app.js' %}"></script>
 </body>
