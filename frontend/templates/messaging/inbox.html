@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Inbox{% endblock %}
+{% block title %}Ujumbe{% endblock %}
 {% block content %}
 <section>
-  <h1>Inbox</h1>
+  <h1>Ujumbe</h1>
   {% if mode == 'lady' %}
     {% for item in unlocks %}
       <a class="row-link" href="{% url 'messaging:thread' item.sponsor.pk %}">
@@ -13,7 +13,7 @@
         </span>
       </a>
     {% empty %}
-      <p>No chats yet. Open a sponsor and pay to message.</p>
+      <p>Bado hakuna mazungumzo. Fungua mfadhili na ulipe ili kuandika.</p>
     {% endfor %}
   {% else %}
     {% for lady in ladies %}
@@ -22,7 +22,7 @@
         <span>{{ lady.phone }}</span>
       </div>
     {% empty %}
-      <p>No ladies have messaged you yet.</p>
+      <p>Bado hakuna mwanamke aliyekutumia ujumbe.</p>
     {% endfor %}
   {% endif %}
 </section>
