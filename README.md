@@ -31,7 +31,7 @@ Deploy on Render (recommended)
 ------------------------------
 1. Push this repo and create a Blueprint from render.yaml.
 2. Set DJANGO_ALLOWED_HOSTS to your onrender.com host.
-3. Set CSRF_TRUSTED_ORIGINS and PUBLIC_BASE_URL to https://YOUR-APP.onrender.com
+3. Set CSRF_TRUSTED_ORIGINS and PUBLIC_BASE_URL to (https://sponsa.onrender.com)
 4. Set **Start Command** (Settings — required if the service was created by hand, not from the Blueprint):
 
    python backend/manage.py migrate --noinput && gunicorn --chdir backend config.wsgi:application
