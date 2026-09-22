@@ -8,13 +8,15 @@ from .models import SponsorProfile
 class SponsorFilterForm(forms.Form):
     city = forms.ChoiceField(
         required=False,
-        choices=[("", "Near my city first")] + list(CITY_CHOICES),
+        choices=[("", "Karibu na jiji langu kwanza")] + list(CITY_CHOICES),
+        label="Jiji",
     )
-    min_age = forms.IntegerField(required=False, min_value=21, max_value=80, initial=21)
-    max_age = forms.IntegerField(required=False, min_value=21, max_value=80, initial=65)
+    min_age = forms.IntegerField(required=False, min_value=21, max_value=80, initial=21, label="Umri mdogo")
+    max_age = forms.IntegerField(required=False, min_value=21, max_value=80, initial=65, label="Umri mkubwa")
     preference = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "travel, dinner, same city"}),
+        label="Mapendeleo",
+        widget=forms.TextInput(attrs={"placeholder": "kusafiri, chakula, jiji moja"}),
     )
 
 
@@ -32,16 +34,20 @@ class SponsorProfileForm(forms.ModelForm):
             "photo",
         )
         labels = {
-            "public_name": "Name",
-            "photo": "Photo",
-            "teaser": "Short intro",
-            "full_bio": "Full profile",
+            "public_name": "Jina",
+            "age": "Umri",
+            "city": "Jiji",
+            "lifestyle": "Maisha",
+            "preference": "Mapendeleo",
+            "photo": "Picha",
+            "teaser": "Utangulizi mfupi",
+            "full_bio": "Wasifu kamili",
         }
         widgets = {
-            "teaser": forms.TextInput(attrs={"placeholder": "Shown before payment"}),
-            "full_bio": forms.Textarea(attrs={"rows": 5, "placeholder": "Shown after payment"}),
-            "lifestyle": forms.TextInput(attrs={"placeholder": "travel, cars, dinners"}),
-            "preference": forms.TextInput(attrs={"placeholder": "22-30, same city"}),
+            "teaser": forms.TextInput(attrs={"placeholder": "Inaonekana kabla ya malipo"}),
+            "full_bio": forms.Textarea(attrs={"rows": 5, "placeholder": "Inaonekana baada ya malipo"}),
+            "lifestyle": forms.TextInput(attrs={"placeholder": "kusafiri, magari, chakula"}),
+            "preference": forms.TextInput(attrs={"placeholder": "22-30, jiji moja"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -52,6 +58,6 @@ class SponsorProfileForm(forms.ModelForm):
 
 class SponsorUploadForm(forms.Form):
     csv_file = forms.FileField(
-        label="CSV file",
-        help_text="Columns: public_name,age,city,lifestyle,preference,teaser,full_bio",
+        label="Faili la CSV",
+        help_text="Safu: public_name,age,city,lifestyle,preference,teaser,full_bio",
     )
