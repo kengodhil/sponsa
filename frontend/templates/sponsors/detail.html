@@ -1,31 +1,66 @@
 {% extends "base.html" %}
 {% block title %}{{ profile.public_name }}{% endblock %}
+{% block body_class %}pay-page{% endblock %}
 {% block content %}
-<article class="profile" style="--accent: {{ profile.accent }}">
-  <div class="man-photo-wrap">
+{% if unlocked %}
+<article class="profile">
+  <div class="man-photo-wrap" style="max-width:280px;margin:0 auto 16px;border-radius:16px;overflow:hidden;">
     <img class="man-photo detail-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
     <div class="avatar xl" hidden>{{ profile.initials }}</div>
   </div>
-  <h1>{{ profile.public_name }}</h1>
-  <p class="chips"><span>{{ profile.age }} miaka</span><span>{{ profile.city }}</span><span>{{ profile.lifestyle }}</span></p>
-
-  {% if unlocked %}
-    <div class="full">
-      <h2>Wasifu kamili</h2>
-      <p>{{ profile.full_bio }}</p>
-      <p class="pref">Mapendeleo: {{ profile.preference }}</p>
-      <a class="btn btn-gold" href="{% url 'messaging:thread' profile.pk %}">Fungua mazungumzo</a>
-    </div>
-  {% else %}
-    <p class="teaser">{{ profile.teaser }}</p>
-    <p class="lock-note">Lipa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> kutoka <strong>{{ user.phone }}</strong> ili kuona wasifu kamili na kuanza kuandika. Ada hii ni kwa mtu huyu tu.</p>
-    <form method="post" action="{% url 'payments:unlock' profile.pk %}">
-      {% csrf_token %}
-      <button class="shine" type="submit">
-        <span class="shine-glow"></span>
-        Nitumie ujumbe
-      </button>
-    </form>
-  {% endif %}
+  <h1 style="text-align:center;">{{ profile.public_name }}</h1>
+  <p class="chips" style="justify-content:center;"><span>{{ profile.age }} years</span><span>{{ profile.city }}</span></p>
+  <div class="full" style="margin-top:16px;">
+    <h2>Full profile</h2>
+    <p>{{ profile.full_bio }}</p>
+    <p class="pref">Preference: {{ profile.preference }}</p>
+    <a class="btn btn-primary" href="{% url 'messaging:thread' profile.pk %}">Open chat</a>
+  </div>
 </article>
+{% else %}
+{# Connection / unlock payment card — matches design #}
+<div class="connect-card">
+  <div class="connect-header">
+    <div>
+      <h1>Connection</h1>
+      <p>malipo ya kuunganishwa na sponsor</p>
+    </div>
+    <span class="connect-lock" aria-hidden="true">🔒</span>
+  </div>
+
+  <div class="connect-body">
+    <div class="connect-sponsor">
+      <div class="connect-avatar-wrap">
+        <img src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+        <div class="avatar" hidden style="width:56px;height:56px;border-radius:12px;font-size:1.1rem;">{{ profile.initials }}</div>
+        <span class="connect-check">✓</span>
+      </div>
+      <div>
+        <strong>{{ profile.public_name }}</strong>
+        <p>📍 {{ profile.city }}</p>
+      </div>
+    </div>
+
+    <div class="connect-price">
+      <span class="connect-price-label">ADA YA KUFUNGUA</span>
+      <span class="connect-price-amount">Tsh {{ unlock_fee|floatformat:0 }}</span>
+      <span class="connect-price-sub">Malipo ya kuunganishwa na sponsor</span>
+      <span class="connect-bag" aria-hidden="true">💰</span>
+    </div>
+
+    <form method="post" action="{% url 'payments:unlock' profile.pk %}" class="connect-form">
+      {% csrf_token %}
+      <label for="phone">Namba ya Simu</label>
+      <div class="connect-phone">
+        <span class="connect-phone-icon">📱</span>
+        <input type="tel" id="phone" name="phone" value="{{ user.phone }}" readonly>
+      </div>
+      <p class="connect-hint">Tigo Pesa, M-Pesa, Airtel Money, au HaloPesa</p>
+      <button class="btn connect-pay" type="submit">🔒 Lipa sasa</button>
+    </form>
+
+    <a class="connect-back" href="{% url 'sponsors:browse' %}">← chagua sponsor mpya</a>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
