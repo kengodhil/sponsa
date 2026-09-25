@@ -1,35 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Sponsa{% endblock %}
+{% block title %}Sponsors{% endblock %}
 {% block content %}
 <section>
-  <h1>Sponsa</h1>
-  <p class="lead">Picha na jiji kwanza. Lipa ili kufungua wasifu kamili na kuzungumza.</p>
-  <form method="get" class="filters">
-    <label>Jiji {{ form.city }}</label>
-    <label>Umri mdogo {{ form.min_age }}</label>
-    <label>Umri mkubwa {{ form.max_age }}</label>
-    <label>Mapendeleo {{ form.preference }}</label>
-    <button class="btn btn-dark" type="submit">Onyesha</button>
-  </form>
-
   <div class="man-grid">
     {% for profile in profiles %}
-      <article class="man-card" style="--accent: {{ profile.accent }}">
+      <article class="man-card">
         <div class="man-photo-wrap">
+          {% if forloop.counter0|divisibleby:4 %}
+            <span class="badge badge-new">+ New</span>
+          {% elif forloop.counter0|divisibleby:3 %}
+            <span class="badge badge-featured">★ Featured</span>
+          {% elif forloop.counter0|divisibleby:2 %}
+            <span class="badge badge-popular">🔥 Popular</span>
+          {% else %}
+            <span class="badge badge-verified">✓ Verified</span>
+          {% endif %}
           <img class="man-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
           <div class="avatar" hidden>{{ profile.initials }}</div>
         </div>
-        <h2>{{ profile.public_name }}</h2>
-        <p class="chips"><span>{{ profile.age }} miaka</span><span>{{ profile.city }}</span></p>
-        <p>{{ profile.teaser }}</p>
-        {% if profile.id in unlocked_ids %}
-          <a class="btn btn-dark" href="{% url 'sponsors:detail' profile.pk %}">Fungua wasifu</a>
-        {% else %}
-          <a class="btn btn-gold" href="{% url 'sponsors:detail' profile.pk %}">Angalia</a>
-        {% endif %}
+        <div class="man-card-body">
+          <h2>{{ profile.public_name }}</h2>
+          <div class="meta-row">
+            <span>📍 {{ profile.city }}</span>
+            <span>🎂 {{ profile.age }} years</span>
+          </div>
+          <p class="teaser">{{ profile.teaser }}</p>
+          {% if profile.id in unlocked_ids %}
+            <a class="btn btn-primary" href="{% url 'sponsors:detail' profile.pk %}">Open profile</a>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'sponsors:detail' profile.pk %}">Connect Now</a>
+          {% endif %}
+        </div>
       </article>
     {% empty %}
-      <p>Hakuna wasifu unaolingana na chaguo hilo.</p>
+      <p>No sponsors match your search.</p>
     {% endfor %}
   </div>
 </section>

@@ -1,41 +1,53 @@
 {% extends "base.html" %}
-{% block title %}Nyumbani{% endblock %}
+{% block title %}Home{% endblock %}
 {% block body_class %}home{% endblock %}
 {% block content %}
 <section class="hero">
-  <p class="kicker">Tanzania · Miaka 18+</p>
-  <h1>Kutana na sponsa.<br>Ingia na namba yako. Lipa. Ongea.</h1>
-  <p class="lead">Wanawake huingia kwa namba ya simu, wanaona picha za sponsa, kisha hulipa <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> ili kufungua wasifu kamili na kuandika ujumbe.</p>
+  <p class="kicker">Tanzania · 18+</p>
+  <h1>Meet sponsors.<br>Join. Pay. Chat.</h1>
+  <p class="lead">Ladies join with phone number, see photos, then pay <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> to unlock full profile and message.</p>
   <div class="choice-grid">
     <a class="choice choice-lady" href="{% url 'accounts:join_lady' %}">
-      <span class="choice-tag">Mwanamke</span>
-      <strong>Ingia kwa namba ya simu</strong>
-      <em>Angalia wanaume · lipa · ongea</em>
+      <span class="choice-tag">Lady</span>
+      <strong>Join with phone</strong>
+      <em>View men · pay · chat</em>
     </a>
     <a class="choice choice-man" href="{% url 'accounts:join_sponsor' %}">
-      <span class="choice-tag">Mwanaume sponsa</span>
-      <strong>Chapisha profile yako</strong>
-      <em>Picha, jiji, kisha ada ya kuweka</em>
+      <span class="choice-tag">Sponsor man</span>
+      <strong>Post your profile</strong>
+      <em>Photo, city, then listing fee</em>
     </a>
   </div>
   <p class="meta">{{ live_count }} live profile{{ live_count|pluralize }}.</p>
-  <p class="tiny">Staff au sponsa anayerudi? <a href="{% url 'accounts:login' %}">Login</a></p>
+  <p class="tiny">Staff or returning sponsor? <a href="{% url 'accounts:login' %}">Login</a></p>
 </section>
 
 {% if featured %}
 <section>
-  <h2>Wanaoonekana sasa</h2>
+  <h2 style="margin-bottom:16px;">Featured now</h2>
   <div class="man-grid">
     {% for profile in featured %}
-      <article class="man-card" style="--accent: {{ profile.accent }}">
+      <article class="man-card">
         <div class="man-photo-wrap">
+          {% if forloop.first %}
+            <span class="badge badge-featured">★ Featured</span>
+          {% elif forloop.counter == 2 %}
+            <span class="badge badge-popular">🔥 Popular</span>
+          {% else %}
+            <span class="badge badge-new">+ New</span>
+          {% endif %}
           <img class="man-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
           <div class="avatar" hidden>{{ profile.initials }}</div>
         </div>
-        <h2>{{ profile.public_name }}</h2>
-        <p class="chips"><span>{{ profile.age }} miaka</span><span>{{ profile.city }}</span></p>
-        <p>{{ profile.teaser }}</p>
-        <a class="btn btn-gold" href="{% url 'accounts:join_lady' %}">Ingia kuona</a>
+        <div class="man-card-body">
+          <h2>{{ profile.public_name }}</h2>
+          <div class="meta-row">
+            <span>📍 {{ profile.city }}</span>
+            <span>🎂 {{ profile.age }} years</span>
+          </div>
+          <p class="teaser">{{ profile.teaser }}</p>
+          <a class="btn btn-primary" href="{% url 'accounts:join_lady' %}">Connect Now</a>
+        </div>
       </article>
     {% endfor %}
   </div>
