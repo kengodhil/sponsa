@@ -47,13 +47,7 @@ def browse(request):
             | Q(city__icontains=preference)
         )
     if city:
-        profiles = profiles.annotate(
-            nearby=Case(
-                When(city__iexact=city, then=Value(0)),
-                default=Value(1),
-                output_field=IntegerField(),
-            )
-        ).order_by("nearby", "age")
+        profiles = profiles.filter(city__icontains=city).order_by("age")
     unlocked_ids = set(
         Unlock.objects.filter(lady=request.user).values_list("sponsor_id", flat=True)
     )
