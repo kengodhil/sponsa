@@ -19,8 +19,6 @@ def env_bool(name, default=False):
 
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key-change-me")
-# Render sets RENDER=true. Default DEBUG off there so the yellow error page
-# cannot leak settings. Override with DJANGO_DEBUG=True if you need it.
 DEBUG = env_bool("DJANGO_DEBUG", default=not bool(os.getenv("RENDER")))
 ALLOWED_HOSTS = [
     host.strip()
@@ -107,22 +105,21 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
-# WhiteNoise only scans STATICFILES_DIRS when this is True. It defaults to
-# DEBUG, so CSS/JS 404 as soon as DEBUG is off and collectstatic was skipped.
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
 WHITENOISE_MANIFEST_STRICT = False
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-UNLOCK_FEE_TZS = int(os.getenv("UNLOCK_FEE_TZS", "15000"))
-LISTING_FEE_TZS = int(os.getenv("LISTING_FEE_TZS", "50000"))
+UNLOCK_FEE_TZS = int(os.getenv("UNLOCK_FEE_TZS", "10000"))
+CHAT_FEE_TZS = int(os.getenv("CHAT_FEE_TZS", "5000"))
+LISTING_FEE_TZS = int(os.getenv("LISTING_FEE_TZS", "0"))
 
-SELCOM_BASE_URL = os.getenv("SELCOM_BASE_URL", "https://apigw.selcommobile.com")
-SELCOM_API_KEY = os.getenv("SELCOM_API_KEY", "")
-SELCOM_API_SECRET = os.getenv("SELCOM_API_SECRET", "")
-SELCOM_VENDOR = os.getenv("SELCOM_VENDOR", "")
-SELCOM_SANDBOX = env_bool("SELCOM_SANDBOX", True)
+# Snippe payment gateway (https://docs.snippe.sh)
+SNIPPE_API_KEY = os.getenv("SNIPPE_API_KEY", "")
+SNIPPE_BASE_URL = os.getenv("SNIPPE_BASE_URL", "https://api.snippe.sh")
+SNIPPE_SANDBOX = env_bool("SNIPPE_SANDBOX", True)
+SELCOM_SANDBOX = SNIPPE_SANDBOX
 PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "http://127.0.0.1:8000")
 
 if os.getenv("RENDER") or not DEBUG:
