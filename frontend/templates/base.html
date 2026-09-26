@@ -54,7 +54,7 @@
   </main>
 
   <footer class="foot">
-    <p>18+ only. Ladies join with phone number. Unlock full profiles for <strong>{{ unlock_fee|floatformat:0 }} TZS</strong>. Sponsors pay {{ listing_fee|floatformat:0 }} TZS to list.</p>
+    <p>18+ only. Join with phone. Unlock profile <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> · Chat <strong>{{ chat_fee|floatformat:0 }} TZS</strong>. Powered by Snippe.</p>
   </footer>
 
   {% if user.is_staff or user.role == 'admin' %}

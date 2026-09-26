@@ -25,6 +25,7 @@ class SponsorProfileForm(forms.ModelForm):
         model = SponsorProfile
         fields = (
             "public_name",
+            "gender",
             "age",
             "city",
             "lifestyle",
@@ -32,9 +33,12 @@ class SponsorProfileForm(forms.ModelForm):
             "teaser",
             "full_bio",
             "photo",
+            "badge",
+            "status",
         )
         labels = {
             "public_name": "Name",
+            "gender": "Gender",
             "age": "Age",
             "city": "City",
             "lifestyle": "Lifestyle",
@@ -42,12 +46,8 @@ class SponsorProfileForm(forms.ModelForm):
             "photo": "Photo",
             "teaser": "Short intro",
             "full_bio": "Full bio",
-        }
-        widgets = {
-            "teaser": forms.TextInput(attrs={"placeholder": "Shown before payment"}),
-            "full_bio": forms.Textarea(attrs={"rows": 5, "placeholder": "Shown after payment"}),
-            "lifestyle": forms.TextInput(attrs={"placeholder": "travel, cars, food"}),
-            "preference": forms.TextInput(attrs={"placeholder": "22-30, same city"}),
+            "badge": "Badge",
+            "status": "Status",
         }
 
     def __init__(self, *args, **kwargs):
@@ -59,5 +59,5 @@ class SponsorProfileForm(forms.ModelForm):
 class SponsorUploadForm(forms.Form):
     csv_file = forms.FileField(
         label="CSV file",
-        help_text="Columns: public_name,age,city,lifestyle,preference,teaser,full_bio",
+        help_text="Columns: public_name,gender,age,city,lifestyle,preference,teaser,full_bio,badge",
     )

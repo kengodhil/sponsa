@@ -6,13 +6,13 @@
     {% for profile in profiles %}
       <article class="man-card">
         <div class="man-photo-wrap">
-          {% if forloop.counter0|divisibleby:4 %}
+          {% if profile.badge == "new" %}
             <span class="badge badge-new">+ New</span>
-          {% elif forloop.counter0|divisibleby:3 %}
+          {% elif profile.badge == "featured" %}
             <span class="badge badge-featured">★ Featured</span>
-          {% elif forloop.counter0|divisibleby:2 %}
+          {% elif profile.badge == "popular" %}
             <span class="badge badge-popular">🔥 Popular</span>
-          {% else %}
+          {% elif profile.badge == "verified" %}
             <span class="badge badge-verified">✓ Verified</span>
           {% endif %}
           <img class="man-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
