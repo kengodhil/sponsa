@@ -4,6 +4,7 @@ import uuid
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from apps.accounts.models import User
-from apps.accounts.phone import normalize_tz_phone
+from apps.accounts.phone import normalize_tz_phone, phone_is_valid
 from apps.sponsors.models import ChatAccess, SponsorProfile, Unlock
 
 from .models import Payment
@@ -26,6 +27,30 @@ def _new_order_id():
 
 def _webhook_url(request):
     return settings.PUBLIC_BASE_URL.rstrip("/") + reverse("payments:webhook")
+
+
+def _ensure_user_from_phone(request, raw_phone):
+    """Create or fetch user by phone and sign them in — no separate login page."""
+    phone = normalize_tz_phone(raw_phone)
+    if not phone_is_valid(phone):
+        return None
+    if request.user.is_authenticated:
+        if normalize_tz_phone(request.user.phone) == phone:
+            return request.user
+    user, created = User.objects.get_or_create(
+        phone=phone,
+        defaults={
+            "role": User.Role.LADY,
+            "is_adult_confirmed": True,
+            "display_name": phone[-4:],
+        },
+    )
+    if not user.is_adult_confirmed:
+        user.is_adult_confirmed = True
+        user.save(update_fields=["is_adult_confirmed"])
+    request.session["adult_ok"] = True
+    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    return user
 
 
 def _send_to_snippe(request, payment, remarks):
@@ -69,16 +94,19 @@ def _send_to_snippe(request, payment, remarks):
     return redirect("payments:status", order_id=payment.order_id)
 
 
-@login_required
 @require_POST
 def start_unlock(request, pk):
-    """First payment: 10,000 TZS — unlock full profile."""
+    """First payment: 10,000 TZS — unlock full profile. Auto-login from phone."""
     profile = get_object_or_404(SponsorProfile, pk=pk, status=SponsorProfile.Status.LIVE)
-    if Unlock.objects.filter(user=request.user, sponsor=profile).exists():
+    phone = request.POST.get("phone") or (request.user.phone if request.user.is_authenticated else "")
+    user = _ensure_user_from_phone(request, phone)
+    if not user:
+        messages.error(request, "Enter a valid Tanzania phone number.")
         return redirect("sponsors:detail", pk=pk)
-    phone = request.POST.get("phone") or request.user.phone
+    if Unlock.objects.filter(user=user, sponsor=profile).exists():
+        return redirect("sponsors:detail", pk=pk)
     payment = Payment.objects.create(
-        user=request.user,
+        user=user,
         sponsor=profile,
         purpose=Payment.Purpose.UNLOCK,
         amount=settings.UNLOCK_FEE_TZS,
@@ -90,19 +118,22 @@ def start_unlock(request, pk):
     return _send_to_snippe(request, payment, f"Unlock {profile.public_name}")
 
 
-@login_required
 @require_POST
 def start_chat(request, pk):
-    """Second payment: 5,000 TZS — open chat."""
+    """Second payment: 5,000 TZS — open chat. Auto-login from phone if needed."""
     profile = get_object_or_404(SponsorProfile, pk=pk, status=SponsorProfile.Status.LIVE)
-    if not Unlock.objects.filter(user=request.user, sponsor=profile).exists():
+    phone = request.POST.get("phone") or (request.user.phone if request.user.is_authenticated else "")
+    user = _ensure_user_from_phone(request, phone)
+    if not user:
+        messages.error(request, "Enter a valid Tanzania phone number.")
+        return redirect("sponsors:detail", pk=pk)
+    if not Unlock.objects.filter(user=user, sponsor=profile).exists():
         messages.error(request, "Unlock the profile first.")
         return redirect("sponsors:detail", pk=pk)
-    if ChatAccess.objects.filter(user=request.user, sponsor=profile).exists():
+    if ChatAccess.objects.filter(user=user, sponsor=profile).exists():
         return redirect("messaging:thread", pk=pk)
-    phone = request.POST.get("phone") or request.user.phone
     payment = Payment.objects.create(
-        user=request.user,
+        user=user,
         sponsor=profile,
         purpose=Payment.Purpose.CHAT,
         amount=settings.CHAT_FEE_TZS,

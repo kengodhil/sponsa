@@ -4,7 +4,6 @@
 {% block content %}
 
 {% if not unlocked %}
-{# Step 1: Pay 10,000 to unlock profile #}
 <div class="connect-card">
   <div class="connect-header">
     <div>
@@ -36,82 +35,79 @@
       <label for="phone">Namba ya Simu</label>
       <div class="connect-phone">
         <span class="connect-phone-icon">📱</span>
-        <input type="tel" id="phone" name="phone" value="{{ user.phone }}" {% if user.phone %}readonly{% endif %}>
+        <input type="tel" id="phone" name="phone" placeholder="07XXXXXXXX" value="{% if user.is_authenticated %}{{ user.phone }}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
       </div>
       <p class="connect-hint">Tigo Pesa, M-Pesa, Airtel Money, au HaloPesa</p>
       <button class="btn connect-pay" type="submit">🔒 Lipa sasa</button>
     </form>
-    <a class="connect-back" href="{% url 'sponsors:browse' %}">← chagua sponsor mpya</a>
+    <a class="connect-back" href="{% url 'home' %}">← chagua sponsor mpya</a>
   </div>
 </div>
 
 {% elif not can_chat %}
-{# Step 2: Profile unlocked — pay 5,000 to chat #}
-<article class="profile">
-  <div class="man-photo-wrap" style="max-width:280px;margin:0 auto 16px;border-radius:16px;overflow:hidden;">
-    <img class="man-photo detail-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
-    <div class="avatar xl" hidden>{{ profile.initials }}</div>
+<article class="profile-detail-card">
+  <div class="profile-detail-photo">
+    <img src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+    <div class="avatar" hidden>{{ profile.initials }}</div>
   </div>
-  <h1 style="text-align:center;">{{ profile.public_name }}</h1>
-  <p class="chips" style="justify-content:center;">
+  <h1>{{ profile.public_name }}</h1>
+  <p class="chips">
     <span>{{ profile.age }} years</span>
     <span>{{ profile.city }}</span>
     {% if profile.gender %}<span>{{ profile.get_gender_display }}</span>{% endif %}
   </p>
-  <div class="full" style="margin-top:16px;">
+  <div class="full">
     <h2>Full profile</h2>
     <p>{{ profile.full_bio }}</p>
     {% if profile.preference %}<p class="pref">Preference: {{ profile.preference }}</p>{% endif %}
+  </div>
+
+  <div class="connect-card" style="margin-top:20px;max-width:100%;box-shadow:none;border:1px solid var(--border);">
+    <div class="connect-header" style="background:linear-gradient(135deg,#ec4899 0%,#a855f7 100%);padding:20px 20px 28px;">
+      <div>
+        <h1 style="font-size:1.25rem;">Chat Now</h1>
+        <p>lipia ili kuanza mazungumzo</p>
+      </div>
+      <span class="connect-lock" aria-hidden="true">💬</span>
+    </div>
+    <div class="connect-body">
+      <div class="connect-price">
+        <span class="connect-price-label">ADA YA MAZUNGUMZO</span>
+        <span class="connect-price-amount">Tsh {{ chat_fee|floatformat:0 }}</span>
+        <span class="connect-price-sub">Malipo ya kuwasiliana na sponsor</span>
+        <span class="connect-bag" aria-hidden="true">💬</span>
+      </div>
+      <form method="post" action="{% url 'payments:chat' profile.pk %}" class="connect-form">
+        {% csrf_token %}
+        <label for="phone2">Namba ya Simu</label>
+        <div class="connect-phone">
+          <span class="connect-phone-icon">📱</span>
+          <input type="tel" id="phone2" name="phone" value="{% if user.is_authenticated %}{{ user.phone }}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
+        </div>
+        <p class="connect-hint">Tigo Pesa, M-Pesa, Airtel Money, au HaloPesa</p>
+        <button class="btn btn-primary chat-now-btn" type="submit">Chat Now</button>
+      </form>
+    </div>
   </div>
 </article>
 
-<div class="connect-card" style="margin-top:24px;">
-  <div class="connect-header" style="background:linear-gradient(135deg,#ec4899 0%,#a855f7 100%);">
-    <div>
-      <h1>Chat Now</h1>
-      <p>lipia ili kuanza mazungumzo</p>
-    </div>
-    <span class="connect-lock" aria-hidden="true">💬</span>
-  </div>
-  <div class="connect-body">
-    <div class="connect-price">
-      <span class="connect-price-label">ADA YA MAZUNGUMZO</span>
-      <span class="connect-price-amount">Tsh {{ chat_fee|floatformat:0 }}</span>
-      <span class="connect-price-sub">Malipo ya kuwasiliana na sponsor</span>
-      <span class="connect-bag" aria-hidden="true">💬</span>
-    </div>
-    <form method="post" action="{% url 'payments:chat' profile.pk %}" class="connect-form">
-      {% csrf_token %}
-      <label for="phone2">Namba ya Simu</label>
-      <div class="connect-phone">
-        <span class="connect-phone-icon">📱</span>
-        <input type="tel" id="phone2" name="phone" value="{{ user.phone }}" {% if user.phone %}readonly{% endif %}>
-      </div>
-      <p class="connect-hint">Tigo Pesa, M-Pesa, Airtel Money, au HaloPesa</p>
-      <button class="btn connect-pay" type="submit">💬 Chat Now — Lipa sasa</button>
-    </form>
-    <a class="connect-back" href="{% url 'sponsors:browse' %}">← chagua sponsor mpya</a>
-  </div>
-</div>
-
 {% else %}
-{# Fully paid: profile + chat open #}
-<article class="profile">
-  <div class="man-photo-wrap" style="max-width:280px;margin:0 auto 16px;border-radius:16px;overflow:hidden;">
-    <img class="man-photo detail-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
-    <div class="avatar xl" hidden>{{ profile.initials }}</div>
+<article class="profile-detail-card">
+  <div class="profile-detail-photo">
+    <img src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
+    <div class="avatar" hidden>{{ profile.initials }}</div>
   </div>
-  <h1 style="text-align:center;">{{ profile.public_name }}</h1>
-  <p class="chips" style="justify-content:center;">
+  <h1>{{ profile.public_name }}</h1>
+  <p class="chips">
     <span>{{ profile.age }} years</span>
     <span>{{ profile.city }}</span>
   </p>
-  <div class="full" style="margin-top:16px;">
+  <div class="full">
     <h2>Full profile</h2>
     <p>{{ profile.full_bio }}</p>
     {% if profile.preference %}<p class="pref">Preference: {{ profile.preference }}</p>{% endif %}
-    <a class="btn btn-primary" href="{% url 'messaging:thread' profile.pk %}">Open chat</a>
   </div>
+  <a class="btn btn-primary chat-now-btn" href="{% url 'messaging:thread' profile.pk %}">Open chat</a>
 </article>
 {% endif %}
 {% endblock %}
