@@ -6,9 +6,7 @@
   <div class="connect-header" style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);">
     <div>
       <h1>Admin</h1>
-      <p>Login to manage sponsors</p>
     </div>
-    <span class="connect-lock" aria-hidden="true">🔑</span>
   </div>
   <div class="connect-body">
     <form method="post" class="connect-form">
@@ -16,10 +14,10 @@
       {% if form.non_field_errors %}
         <p class="flash flash-error">{{ form.non_field_errors }}</p>
       {% endif %}
-      <label for="id_username">Phone or “admin”</label>
+      <label for="id_username">Phone number</label>
       <div class="connect-phone">
         <span class="connect-phone-icon">📱</span>
-        <input type="text" name="username" id="id_username" placeholder="admin or 07…" autofocus required>
+        <input type="text" name="username" id="id_username" placeholder="07XXXXXXXX" autofocus required>
       </div>
       <label for="id_password">Password</label>
       <div class="connect-phone">
