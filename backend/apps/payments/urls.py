@@ -6,8 +6,8 @@ app_name = "payments"
 
 urlpatterns = [
     path("unlock/<int:pk>/", views.start_unlock, name="unlock"),
-    path("listing/", views.start_listing, name="listing"),
+    path("chat/<int:pk>/", views.start_chat, name="chat"),
     path("status/<str:order_id>/", views.payment_status, name="status"),
     path("status/<str:order_id>/demo/", views.demo_confirm, name="demo_confirm"),
-    path("selcom/webhook/", views.selcom_webhook, name="webhook"),
+    path("snippe/webhook/", views.snippe_webhook, name="webhook"),
 ]
