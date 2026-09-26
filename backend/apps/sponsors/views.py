@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Case, IntegerField, Q, Value, When
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 
@@ -7,7 +7,7 @@ from apps.accounts.models import User
 from apps.accounts.views import adult_required
 
 from .forms import SponsorFilterForm, SponsorProfileForm
-from .models import SponsorProfile, Unlock
+from .models import ChatAccess, SponsorProfile, Unlock
 
 
 def home(request):
@@ -17,7 +17,7 @@ def home(request):
         "pages/home.html",
         {
             "live_count": live.count(),
-            "featured": live[:6],
+            "featured": live[:8],
         },
     )
 
@@ -25,16 +25,14 @@ def home(request):
 @adult_required
 @login_required
 def browse(request):
-    if request.user.role == User.Role.SPONSOR:
-        return redirect("sponsors:my_listing")
     form = SponsorFilterForm(request.GET or None)
     profiles = SponsorProfile.objects.filter(status=SponsorProfile.Status.LIVE)
-    city = request.user.city
+    city = ""
     min_age = 21
     max_age = 80
     preference = ""
     if form.is_valid():
-        city = form.cleaned_data.get("city") or request.user.city
+        city = (form.cleaned_data.get("city") or "").strip()
         min_age = form.cleaned_data.get("min_age") or 21
         max_age = form.cleaned_data.get("max_age") or 80
         preference = (form.cleaned_data.get("preference") or "").strip()
@@ -45,11 +43,12 @@ def browse(request):
             | Q(preference__icontains=preference)
             | Q(teaser__icontains=preference)
             | Q(city__icontains=preference)
+            | Q(public_name__icontains=preference)
         )
     if city:
-        profiles = profiles.filter(city__icontains=city).order_by("age")
+        profiles = profiles.filter(city__icontains=city)
     unlocked_ids = set(
-        Unlock.objects.filter(lady=request.user).values_list("sponsor_id", flat=True)
+        Unlock.objects.filter(user=request.user).values_list("sponsor_id", flat=True)
     )
     return render(
         request,
@@ -68,40 +67,31 @@ def browse(request):
 def profile_detail(request, pk):
     profile = get_object_or_404(SponsorProfile, pk=pk, status=SponsorProfile.Status.LIVE)
     unlocked = False
-    if request.user.role == User.Role.LADY:
-        unlocked = Unlock.objects.filter(lady=request.user, sponsor=profile).exists()
-    elif request.user.is_staff or request.user.role == User.Role.ADMIN:
+    can_chat = False
+    if request.user.is_staff or request.user.role == User.Role.ADMIN:
         unlocked = True
-    elif request.user.get_listing() and request.user.get_listing().pk == profile.pk:
-        unlocked = True
+        can_chat = True
+    else:
+        unlocked = Unlock.objects.filter(user=request.user, sponsor=profile).exists()
+        can_chat = ChatAccess.objects.filter(user=request.user, sponsor=profile).exists()
     return render(
         request,
         "sponsors/detail.html",
-        {"profile": profile, "unlocked": unlocked},
+        {
+            "profile": profile,
+            "unlocked": unlocked,
+            "can_chat": can_chat,
+        },
     )
 
 
 @login_required
 def my_listing(request):
-    if request.user.role != User.Role.SPONSOR and not request.user.is_staff:
-        return redirect("sponsors:browse")
-    profile = request.user.get_listing()
-    return render(request, "sponsors/my_listing.html", {"profile": profile})
+    messages.info(request, "Only admin can add sponsors.")
+    return redirect("sponsors:browse")
 
 
 @login_required
 def edit_listing(request):
-    if request.user.role != User.Role.SPONSOR:
-        messages.error(request, "Only sponsor men can publish a card.")
-        return redirect("home")
-    profile = request.user.get_listing()
-    form = SponsorProfileForm(request.POST or None, request.FILES or None, instance=profile)
-    if request.method == "POST" and form.is_valid():
-        listing = form.save(commit=False)
-        listing.owner = request.user
-        if not listing.status or listing.status == SponsorProfile.Status.DRAFT:
-            listing.status = SponsorProfile.Status.DRAFT
-        listing.save()
-        messages.success(request, "Profile saved. Pay the listing fee to appear for ladies.")
-        return redirect("sponsors:my_listing")
-    return render(request, "sponsors/edit.html", {"form": form, "profile": profile})
+    messages.info(request, "Only admin can add sponsors.")
+    return redirect("sponsors:browse")

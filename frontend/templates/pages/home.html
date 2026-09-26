@@ -5,21 +5,20 @@
 <section class="hero">
   <p class="kicker">Tanzania · 18+</p>
   <h1>Meet sponsors.<br>Join. Pay. Chat.</h1>
-  <p class="lead">Ladies join with phone number, see photos, then pay <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> to unlock full profile and message.</p>
+  <p class="lead">Join with your phone number, see photos, pay <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> to unlock a profile, then <strong>{{ chat_fee|floatformat:0 }} TZS</strong> to chat.</p>
   <div class="choice-grid">
     <a class="choice choice-lady" href="{% url 'accounts:join_lady' %}">
-      <span class="choice-tag">Lady</span>
+      <span class="choice-tag">Join</span>
       <strong>Join with phone</strong>
-      <em>View men · pay · chat</em>
+      <em>View sponsors · unlock · chat</em>
     </a>
-    <a class="choice choice-man" href="{% url 'accounts:join_sponsor' %}">
-      <span class="choice-tag">Sponsor man</span>
-      <strong>Post your profile</strong>
-      <em>Photo, city, then listing fee</em>
+    <a class="choice choice-man" href="{% url 'accounts:login' %}">
+      <span class="choice-tag">Login</span>
+      <strong>Already have account?</strong>
+      <em>Staff / returning users</em>
     </a>
   </div>
   <p class="meta">{{ live_count }} live profile{{ live_count|pluralize }}.</p>
-  <p class="tiny">Staff or returning sponsor? <a href="{% url 'accounts:login' %}">Login</a></p>
 </section>
 
 {% if featured %}
@@ -29,11 +28,13 @@
     {% for profile in featured %}
       <article class="man-card">
         <div class="man-photo-wrap">
-          {% if forloop.first %}
+          {% if profile.badge == "featured" %}
             <span class="badge badge-featured">★ Featured</span>
-          {% elif forloop.counter == 2 %}
+          {% elif profile.badge == "popular" %}
             <span class="badge badge-popular">🔥 Popular</span>
-          {% else %}
+          {% elif profile.badge == "verified" %}
+            <span class="badge badge-verified">✓ Verified</span>
+          {% elif profile.badge == "new" %}
             <span class="badge badge-new">+ New</span>
           {% endif %}
           <img class="man-photo" src="{{ profile.card_photo }}" alt="{{ profile.public_name }}" onerror="this.style.display='none'; this.nextElementSibling.hidden=false;">
