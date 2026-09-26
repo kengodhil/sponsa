@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-<section class="card">
+<section class="card" style="max-width:520px;margin:0 auto;">
   <h1>{{ title }}</h1>
+  <p class="lead">Photo + profile details only.</p>
+
+  {% if profile and profile.photo %}
+    <p style="margin-bottom:16px;">
+      <img src="{{ profile.photo.url }}" alt="" style="max-width:120px;border-radius:12px;">
+    </p>
+  {% endif %}
+
   <form method="post" enctype="multipart/form-data" class="stack">
     {% csrf_token %}
     {% for field in form %}

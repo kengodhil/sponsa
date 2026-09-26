@@ -1,38 +1,65 @@
-import csv
-import io
-
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
 from apps.accounts.forms import PhoneAuthForm
 from apps.accounts.models import User
 from apps.payments.models import Payment
-from apps.sponsors.forms import SponsorProfileForm, SponsorUploadForm
-from apps.sponsors.models import ChatAccess, SponsorProfile, Unlock
+from apps.sponsors.forms import SponsorProfileForm
+from apps.sponsors.models import SponsorProfile
 
 
 def staff_only(user):
-    return user.is_authenticated and (user.is_staff or user.role == User.Role.ADMIN)
+    """Only authenticated staff or admin role."""
+    return bool(
+        user
+        and user.is_authenticated
+        and user.is_active
+        and (user.is_staff or getattr(user, "role", None) == User.Role.ADMIN)
+    )
 
 
 staff_required = user_passes_test(staff_only, login_url="staff:login")
 
 
 def admin_login(request):
-    """Simple admin login — phone/admin + password."""
+    """Admin-only login. Rejects regular users even with valid password."""
     if request.user.is_authenticated and staff_only(request.user):
         return redirect("staff:dashboard")
+
+    fails = request.session.get("admin_login_fails", 0)
     form = PhoneAuthForm(request, data=request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        user = form.get_user()
-        if not (user.is_staff or user.role == User.Role.ADMIN):
-            messages.error(request, "Not an admin account.")
+
+    if request.method == "POST":
+        if fails >= 8:
+            messages.error(request, "Too many attempts. Try again later.")
             return render(request, "staff/admin_login.html", {"form": form})
-        login(request, user)
-        return redirect("staff:dashboard")
+
+        if form.is_valid():
+            user = form.get_user()
+            if not staff_only(user):
+                request.session["admin_login_fails"] = fails + 1
+                messages.error(request, "Not an admin account.")
+                return render(request, "staff/admin_login.html", {"form": form})
+            request.session.cycle_key()
+            request.session.pop("admin_login_fails", None)
+            login(request, user)
+            return redirect("staff:dashboard")
+
+        request.session["admin_login_fails"] = fails + 1
+        messages.error(request, "Invalid phone or password.")
+
     return render(request, "staff/admin_login.html", {"form": form})
+
+
+@staff_required
+@require_http_methods(["POST"])
+def admin_logout(request):
+    logout(request)
+    messages.success(request, "Logged out.")
+    return redirect("staff:login")
 
 
 @staff_required
@@ -42,17 +69,9 @@ def dashboard(request):
         "staff/dashboard.html",
         {
             "profiles": SponsorProfile.objects.all().order_by("-created_at"),
-            "payments": Payment.objects.select_related("user", "sponsor")[:30],
-            "unlocks": Unlock.objects.select_related("user", "sponsor")[:30],
-            "chats": ChatAccess.objects.select_related("user", "sponsor")[:30],
+            "payments": Payment.objects.select_related("user", "sponsor")[:25],
         },
     )
-
-
-@staff_required
-def user_detail(request, pk):
-    person = get_object_or_404(User, pk=pk)
-    return render(request, "staff/user_detail.html", {"person": person})
 
 
 @staff_required
@@ -60,11 +79,16 @@ def create_profile(request):
     form = SponsorProfileForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
         profile = form.save(commit=False)
-        profile.status = SponsorProfile.Status.LIVE
+        if not profile.status:
+            profile.status = SponsorProfile.Status.LIVE
         profile.save()
-        messages.success(request, f"{profile.public_name} is live.")
+        messages.success(request, f"{profile.public_name} saved.")
         return redirect("staff:dashboard")
-    return render(request, "staff/profile_form.html", {"form": form, "title": "Add sponsor"})
+    return render(
+        request,
+        "staff/profile_form.html",
+        {"form": form, "title": "Add sponsor", "profile": None},
+    )
 
 
 @staff_required
@@ -83,34 +107,10 @@ def edit_profile(request, pk):
 
 
 @staff_required
-def csv_upload(request):
-    form = SponsorUploadForm(request.POST or None, request.FILES or None)
-    created = 0
-    if request.method == "POST" and form.is_valid():
-        raw = form.cleaned_data["csv_file"].read()
-        text = raw.decode("utf-8-sig")
-        reader = csv.DictReader(io.StringIO(text))
-        for row in reader:
-            name = (row.get("public_name") or row.get("name") or "").strip()
-            if not name:
-                continue
-            gender = (row.get("gender") or "man").strip().lower()
-            if gender not in ("man", "woman"):
-                gender = "man"
-            badge = (row.get("badge") or "").strip().lower()
-            SponsorProfile.objects.create(
-                public_name=name,
-                gender=gender,
-                age=int(row.get("age") or 40),
-                city=(row.get("city") or "Dar es Salaam").strip(),
-                lifestyle=(row.get("lifestyle") or "").strip(),
-                preference=(row.get("preference") or "").strip(),
-                teaser=(row.get("teaser") or "Private sponsor.").strip(),
-                full_bio=(row.get("full_bio") or row.get("bio") or "Full profile.").strip(),
-                badge=badge,
-                status=SponsorProfile.Status.LIVE,
-            )
-            created += 1
-        messages.success(request, f"Uploaded {created} sponsors.")
-        return redirect("staff:dashboard")
-    return render(request, "staff/csv_upload.html", {"form": form})
+@require_http_methods(["POST"])
+def delete_profile(request, pk):
+    profile = get_object_or_404(SponsorProfile, pk=pk)
+    name = profile.public_name
+    profile.delete()
+    messages.success(request, f"{name} removed.")
+    return redirect("staff:dashboard")

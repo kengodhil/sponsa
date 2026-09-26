@@ -2,13 +2,19 @@
 {% block title %}Admin{% endblock %}
 {% block content %}
 <section>
-  <h1 style="margin-bottom:4px;">Admin</h1>
-  <p class="lead" style="margin-bottom:20px;">Add sponsors · manage profiles</p>
-
-  <div class="btn-row" style="margin-bottom:28px;flex-wrap:wrap;gap:10px;">
-    <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">+ Add sponsor</a>
-    <a class="btn btn-dark" href="{% url 'staff:csv_upload' %}">Upload CSV</a>
-    <a class="btn btn-dark" href="{% url 'home' %}">View site</a>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
+    <div>
+      <h1 style="margin:0 0 4px;">Admin</h1>
+      <p class="lead" style="margin:0;">Add sponsors with photo and details</p>
+    </div>
+    <div class="btn-row" style="display:flex;flex-direction:row;gap:10px;margin:0;">
+      <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">+ Add sponsor</a>
+      <a class="btn btn-dark" href="{% url 'home' %}">View site</a>
+      <form method="post" action="{% url 'staff:logout' %}" style="margin:0;">
+        {% csrf_token %}
+        <button class="btn btn-outline" type="submit">Logout</button>
+      </form>
+    </div>
   </div>
 
   <h2 style="margin-bottom:12px;">Sponsors ({{ profiles|length }})</h2>
@@ -16,6 +22,7 @@
     <table>
       <thead>
         <tr>
+          <th>Photo</th>
           <th>Name</th>
           <th>Gender</th>
           <th>Age</th>
@@ -28,16 +35,26 @@
       <tbody>
         {% for profile in profiles %}
           <tr>
+            <td>
+              <img src="{{ profile.card_photo }}" alt="" width="40" height="40" style="border-radius:8px;object-fit:cover;" onerror="this.style.display='none'">
+            </td>
             <td><strong>{{ profile.public_name }}</strong></td>
             <td>{{ profile.get_gender_display }}</td>
             <td>{{ profile.age }}</td>
             <td>{{ profile.city }}</td>
             <td>{{ profile.badge|default:"—" }}</td>
             <td>{{ profile.status }}</td>
-            <td><a href="{% url 'staff:edit_profile' profile.pk %}">Edit</a></td>
+            <td style="white-space:nowrap;">
+              <a href="{% url 'staff:edit_profile' profile.pk %}">Edit</a>
+              ·
+              <form method="post" action="{% url 'staff:delete_profile' profile.pk %}" style="display:inline;" onsubmit="return confirm('Delete this sponsor?');">
+                {% csrf_token %}
+                <button type="submit" class="linkish" style="color:#dc2626;background:none;border:0;cursor:pointer;font:inherit;padding:0;">Delete</button>
+              </form>
+            </td>
           </tr>
         {% empty %}
-          <tr><td colspan="7">No sponsors yet. Add one.</td></tr>
+          <tr><td colspan="8">No sponsors yet. Add one with photo and details.</td></tr>
         {% endfor %}
       </tbody>
     </table>

@@ -21,6 +21,8 @@ class SponsorFilterForm(forms.Form):
 
 
 class SponsorProfileForm(forms.ModelForm):
+    """Admin form: photo + profile details only. No CSV."""
+
     class Meta:
         model = SponsorProfile
         fields = (
@@ -44,20 +46,22 @@ class SponsorProfileForm(forms.ModelForm):
             "lifestyle": "Lifestyle",
             "preference": "Preference",
             "photo": "Photo",
-            "teaser": "Short intro",
-            "full_bio": "Full bio",
+            "teaser": "Short intro (before pay)",
+            "full_bio": "Full bio (after unlock)",
             "badge": "Badge",
             "status": "Status",
+        }
+        widgets = {
+            "photo": forms.ClearableFileInput(attrs={"accept": "image/*"}),
+            "teaser": forms.TextInput(attrs={"maxlength": 180, "placeholder": "Short line on the card"}),
+            "full_bio": forms.Textarea(attrs={"rows": 4, "placeholder": "Full profile after payment"}),
+            "lifestyle": forms.TextInput(attrs={"placeholder": "e.g. travel, business"}),
+            "preference": forms.TextInput(attrs={"placeholder": "e.g. 25-35, Dar"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.help_text = ""
-
-
-class SponsorUploadForm(forms.Form):
-    csv_file = forms.FileField(
-        label="CSV file",
-        help_text="Columns: public_name,gender,age,city,lifestyle,preference,teaser,full_bio,badge",
-    )
+        self.fields["photo"].required = False
+        self.fields["status"].initial = SponsorProfile.Status.LIVE
