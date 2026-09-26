@@ -49,8 +49,10 @@
     <p>18+ only. Unlock <strong>{{ unlock_fee|floatformat:0 }} TZS</strong> · Chat <strong>{{ chat_fee|floatformat:0 }} TZS</strong>.</p>
   </footer>
 
-  {% if user.is_staff or user.role == 'admin' %}
+  {% if user.is_authenticated and user.is_staff or user.is_authenticated and user.role == 'admin' %}
     <a class="admin-fab" href="{% url 'staff:dashboard' %}">🔑 Admin</a>
+  {% else %}
+    <a class="admin-fab" href="{% url 'staff:login' %}">🔑 Admin</a>
   {% endif %}
 
   <script src="{% static 'js/app.js' %}"></script>

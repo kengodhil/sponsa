@@ -2,20 +2,37 @@ import csv
 import io
 
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.accounts.forms import PhoneAuthForm
 from apps.accounts.models import User
 from apps.payments.models import Payment
 from apps.sponsors.forms import SponsorProfileForm, SponsorUploadForm
-from apps.sponsors.models import SponsorProfile, Unlock
+from apps.sponsors.models import ChatAccess, SponsorProfile, Unlock
 
 
 def staff_only(user):
     return user.is_authenticated and (user.is_staff or user.role == User.Role.ADMIN)
 
 
-staff_required = user_passes_test(staff_only, login_url="accounts:login")
+staff_required = user_passes_test(staff_only, login_url="staff:login")
+
+
+def admin_login(request):
+    """Simple admin login — phone/admin + password."""
+    if request.user.is_authenticated and staff_only(request.user):
+        return redirect("staff:dashboard")
+    form = PhoneAuthForm(request, data=request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.get_user()
+        if not (user.is_staff or user.role == User.Role.ADMIN):
+            messages.error(request, "Not an admin account.")
+            return render(request, "staff/admin_login.html", {"form": form})
+        login(request, user)
+        return redirect("staff:dashboard")
+    return render(request, "staff/admin_login.html", {"form": form})
 
 
 @staff_required
@@ -24,11 +41,10 @@ def dashboard(request):
         request,
         "staff/dashboard.html",
         {
-            "ladies": User.objects.filter(role=User.Role.LADY),
-            "men": User.objects.filter(role=User.Role.SPONSOR),
-            "profiles": SponsorProfile.objects.select_related("owner"),
-            "payments": Payment.objects.select_related("user", "sponsor")[:40],
-            "unlocks": Unlock.objects.select_related("lady", "sponsor")[:40],
+            "profiles": SponsorProfile.objects.all().order_by("-created_at"),
+            "payments": Payment.objects.select_related("user", "sponsor")[:30],
+            "unlocks": Unlock.objects.select_related("user", "sponsor")[:30],
+            "chats": ChatAccess.objects.select_related("user", "sponsor")[:30],
         },
     )
 
@@ -48,7 +64,7 @@ def create_profile(request):
         profile.save()
         messages.success(request, f"{profile.public_name} is live.")
         return redirect("staff:dashboard")
-    return render(request, "staff/profile_form.html", {"form": form, "title": "Upload one sponsor"})
+    return render(request, "staff/profile_form.html", {"form": form, "title": "Add sponsor"})
 
 
 @staff_required
@@ -57,9 +73,13 @@ def edit_profile(request, pk):
     form = SponsorProfileForm(request.POST or None, request.FILES or None, instance=profile)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Sponsor profile updated.")
+        messages.success(request, "Sponsor updated.")
         return redirect("staff:dashboard")
-    return render(request, "staff/profile_form.html", {"form": form, "title": "Edit sponsor", "profile": profile})
+    return render(
+        request,
+        "staff/profile_form.html",
+        {"form": form, "title": "Edit sponsor", "profile": profile},
+    )
 
 
 @staff_required
@@ -74,17 +94,23 @@ def csv_upload(request):
             name = (row.get("public_name") or row.get("name") or "").strip()
             if not name:
                 continue
+            gender = (row.get("gender") or "man").strip().lower()
+            if gender not in ("man", "woman"):
+                gender = "man"
+            badge = (row.get("badge") or "").strip().lower()
             SponsorProfile.objects.create(
                 public_name=name,
+                gender=gender,
                 age=int(row.get("age") or 40),
                 city=(row.get("city") or "Dar es Salaam").strip(),
-                lifestyle=(row.get("lifestyle") or "travel").strip(),
+                lifestyle=(row.get("lifestyle") or "").strip(),
                 preference=(row.get("preference") or "").strip(),
-                teaser=(row.get("teaser") or "Private sponsor. Pay to see full profile.").strip(),
-                full_bio=(row.get("full_bio") or row.get("bio") or "Full profile uploaded by admin.").strip(),
+                teaser=(row.get("teaser") or "Private sponsor.").strip(),
+                full_bio=(row.get("full_bio") or row.get("bio") or "Full profile.").strip(),
+                badge=badge,
                 status=SponsorProfile.Status.LIVE,
             )
             created += 1
-        messages.success(request, f"Uploaded {created} sponsor profiles.")
+        messages.success(request, f"Uploaded {created} sponsors.")
         return redirect("staff:dashboard")
     return render(request, "staff/csv_upload.html", {"form": form})

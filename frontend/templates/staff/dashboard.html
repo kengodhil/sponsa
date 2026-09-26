@@ -1,67 +1,71 @@
 {% extends "base.html" %}
-{% block title %}Management{% endblock %}
+{% block title %}Admin{% endblock %}
 {% block content %}
 <section>
-  <h1>Management</h1>
-  <p class="lead">Wanawake, sponsa, malipo na wasifu hai.</p>
-  <div class="btn-row">
-    <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">Ongeza sponsa</a>
-    <a class="btn btn-dark" href="{% url 'staff:csv_upload' %}">Pakia CSV</a>
-    <a class="btn btn-dark" href="/django-admin/">Django admin</a>
+  <h1 style="margin-bottom:4px;">Admin</h1>
+  <p class="lead" style="margin-bottom:20px;">Add sponsors · manage profiles</p>
+
+  <div class="btn-row" style="margin-bottom:28px;flex-wrap:wrap;gap:10px;">
+    <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">+ Add sponsor</a>
+    <a class="btn btn-dark" href="{% url 'staff:csv_upload' %}">Upload CSV</a>
+    <a class="btn btn-dark" href="{% url 'home' %}">View site</a>
   </div>
 
-  <h2>Wanawake</h2>
+  <h2 style="margin-bottom:12px;">Sponsors ({{ profiles|length }})</h2>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Namba</th><th>Jina</th><th>Jiji</th><th>Umri</th><th>Mapendeleo</th></tr></thead>
-      <tbody>
-        {% for person in ladies %}
-          <tr>
-            <td><a href="{% url 'staff:user_detail' person.pk %}">{{ person.phone }}</a></td>
-            <td>{{ person.display_name }}</td>
-            <td>{{ person.city }}</td>
-            <td>{{ person.age }}</td>
-            <td>{{ person.looking_for }}</td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="5">Bado hakuna</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <h2>Akaunti za sponsa</h2>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Namba</th><th>Jina</th><th>Jiji</th><th>Umri</th></tr></thead>
-      <tbody>
-        {% for person in men %}
-          <tr>
-            <td><a href="{% url 'staff:user_detail' person.pk %}">{{ person.phone }}</a></td>
-            <td>{{ person.display_name }}</td>
-            <td>{{ person.city }}</td>
-            <td>{{ person.age }}</td>
-          </tr>
-        {% empty %}
-          <tr><td colspan="4">Bado hakuna</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <h2>Wasifu wa sponsa</h2>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Jina</th><th>Umri</th><th>Jiji</th><th>Hali</th><th>Namba</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Age</th>
+          <th>City</th>
+          <th>Badge</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
       <tbody>
         {% for profile in profiles %}
           <tr>
-            <td><a href="{% url 'staff:edit_profile' profile.pk %}">{{ profile.public_name }}</a></td>
+            <td><strong>{{ profile.public_name }}</strong></td>
+            <td>{{ profile.get_gender_display }}</td>
             <td>{{ profile.age }}</td>
             <td>{{ profile.city }}</td>
+            <td>{{ profile.badge|default:"—" }}</td>
             <td>{{ profile.status }}</td>
-            <td>{{ profile.owner.phone|default:"imepakiwa na admin" }}</td>
+            <td><a href="{% url 'staff:edit_profile' profile.pk %}">Edit</a></td>
           </tr>
+        {% empty %}
+          <tr><td colspan="7">No sponsors yet. Add one.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin:28px 0 12px;">Recent payments</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Phone</th>
+          <th>Amount</th>
+          <th>Purpose</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+          <tr>
+            <td>{{ p.order_id }}</td>
+            <td>{{ p.msisdn }}</td>
+            <td>{{ p.amount }} {{ p.currency }}</td>
+            <td>{{ p.purpose }}</td>
+            <td>{{ p.status }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5">No payments yet.</td></tr>
         {% endfor %}
       </tbody>
     </table>
