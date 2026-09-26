@@ -17,13 +17,11 @@ def home(request):
         "pages/home.html",
         {
             "live_count": live.count(),
-            "featured": live[:8],
+            "featured": live,
         },
     )
 
 
-@adult_required
-@login_required
 def browse(request):
     form = SponsorFilterForm(request.GET or None)
     profiles = SponsorProfile.objects.filter(status=SponsorProfile.Status.LIVE)
@@ -47,9 +45,11 @@ def browse(request):
         )
     if city:
         profiles = profiles.filter(city__icontains=city)
-    unlocked_ids = set(
-        Unlock.objects.filter(user=request.user).values_list("sponsor_id", flat=True)
-    )
+    unlocked_ids = set()
+    if request.user.is_authenticated:
+        unlocked_ids = set(
+            Unlock.objects.filter(user=request.user).values_list("sponsor_id", flat=True)
+        )
     return render(
         request,
         "sponsors/browse.html",
@@ -62,18 +62,17 @@ def browse(request):
     )
 
 
-@adult_required
-@login_required
 def profile_detail(request, pk):
     profile = get_object_or_404(SponsorProfile, pk=pk, status=SponsorProfile.Status.LIVE)
     unlocked = False
     can_chat = False
-    if request.user.is_staff or request.user.role == User.Role.ADMIN:
-        unlocked = True
-        can_chat = True
-    else:
-        unlocked = Unlock.objects.filter(user=request.user, sponsor=profile).exists()
-        can_chat = ChatAccess.objects.filter(user=request.user, sponsor=profile).exists()
+    if request.user.is_authenticated:
+        if request.user.is_staff or request.user.role == User.Role.ADMIN:
+            unlocked = True
+            can_chat = True
+        else:
+            unlocked = Unlock.objects.filter(user=request.user, sponsor=profile).exists()
+            can_chat = ChatAccess.objects.filter(user=request.user, sponsor=profile).exists()
     return render(
         request,
         "sponsors/detail.html",

@@ -20,11 +20,22 @@ def env_bool(name, default=False):
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-dev-key-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", default=not bool(os.getenv("RENDER")))
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com,.vercel.app").split(",")
-    if host.strip()
+
+_default_hosts = [
+    "127.0.0.1",
+    "localhost",
+    "sponsa.onrender.com",
+    ".onrender.com",
+    ".vercel.app",
 ]
+_env_hosts = [
+    h.strip()
+    for h in os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if h.strip()
+]
+ALLOWED_HOSTS = list(dict.fromkeys(_default_hosts + _env_hosts))
+if os.getenv("RENDER"):
+    ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS + ["sponsa.onrender.com", ".onrender.com"]))
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -115,12 +126,11 @@ UNLOCK_FEE_TZS = int(os.getenv("UNLOCK_FEE_TZS", "10000"))
 CHAT_FEE_TZS = int(os.getenv("CHAT_FEE_TZS", "5000"))
 LISTING_FEE_TZS = int(os.getenv("LISTING_FEE_TZS", "0"))
 
-# Snippe payment gateway (https://docs.snippe.sh)
 SNIPPE_API_KEY = os.getenv("SNIPPE_API_KEY", "")
 SNIPPE_BASE_URL = os.getenv("SNIPPE_BASE_URL", "https://api.snippe.sh")
 SNIPPE_SANDBOX = env_bool("SNIPPE_SANDBOX", True)
 SELCOM_SANDBOX = SNIPPE_SANDBOX
-PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "http://127.0.0.1:8000")
+PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "https://sponsa.onrender.com")
 
 if os.getenv("RENDER") or not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -131,7 +141,9 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
         "CSRF_TRUSTED_ORIGINS",
-        "http://127.0.0.1:8000,http://localhost:8000,https://*.onrender.com,https://*.vercel.app",
+        "http://127.0.0.1:8000,http://localhost:8000,https://sponsa.onrender.com,https://*.onrender.com,https://*.vercel.app",
     ).split(",")
     if origin.strip()
 ]
+if "https://sponsa.onrender.com" not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append("https://sponsa.onrender.com")
