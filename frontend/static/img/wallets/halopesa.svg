@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 48" role="img" aria-label="HaloPesa Halotel">
+  <rect width="120" height="48" rx="8" fill="#2E7D32"/>
+  <g transform="translate(14,24)" fill="#F15A22">
+    <circle cx="0" cy="-5" r="5"/>
+    <circle cx="0" cy="6" r="5"/>
+    <path d="M6,-9 C13,-9 16,-2 16,0 C16,2 13,9 6,9 L6,-9 Z"/>
+  </g>
+  <text x="36" y="22" font-family="Arial,sans-serif" font-weight="800" font-size="11" fill="#F15A22">HaloPesa</text>
+  <text x="36" y="34" font-family="Arial,sans-serif" font-weight="600" font-size="8" fill="#fff">halotel</text>
+</svg>

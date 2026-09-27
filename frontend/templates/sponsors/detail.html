@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ profile.public_name }}{% endblock %}
 {% block body_class %}{% if not unlocked %}pay-page{% endif %}{% endblock %}
 {% block content %}
@@ -34,10 +35,15 @@
       {% csrf_token %}
       <label for="phone">Namba ya Simu</label>
       <div class="connect-phone">
-        <span class="connect-phone-icon">📱</span>
-        <input type="tel" id="phone" name="phone" placeholder="07XXXXXXXX" value="{% if user.is_authenticated %}{{ user.phone }}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
+        <span class="connect-phone-prefix">+255</span>
+        <input type="tel" id="phone" name="phone" placeholder="7XXXXXXXX" inputmode="tel" autocomplete="tel" value="{% if user.is_authenticated and user.phone %}{% if user.phone|slice:':3' == '255' %}{{ user.phone|slice:'3:' }}{% else %}{{ user.phone }}{% endif %}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
       </div>
-      <p class="connect-hint">Tigo Pesa, M-Pesa, Airtel Money, au HaloPesa</p>
+      <div class="wallet-logos" aria-label="Mobile money wallets">
+        <img src="{% static 'img/wallets/m-pesa.svg' %}" alt="M-Pesa" title="M-Pesa">
+        <img src="{% static 'img/wallets/airtel-money.svg' %}" alt="Airtel Money" title="Airtel Money">
+        <img src="{% static 'img/wallets/mixx-yas.svg' %}" alt="Mixx by Yas" title="Mixx by Yas">
+        <img src="{% static 'img/wallets/halopesa.svg' %}" alt="HaloPesa" title="HaloPesa">
+      </div>
       <button class="btn connect-pay" type="submit">🔒 Lipa sasa</button>
     </form>
     <a class="connect-back" href="{% url 'home' %}">← chagua sponsor mpya</a>
@@ -81,10 +87,15 @@
         {% csrf_token %}
         <label for="phone2">Namba ya Simu</label>
         <div class="connect-phone">
-          <span class="connect-phone-icon">📱</span>
-          <input type="tel" id="phone2" name="phone" value="{% if user.is_authenticated %}{{ user.phone }}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
+          <span class="connect-phone-prefix">+255</span>
+          <input type="tel" id="phone2" name="phone" placeholder="7XXXXXXXX" inputmode="tel" autocomplete="tel" value="{% if user.is_authenticated and user.phone %}{% if user.phone|slice:':3' == '255' %}{{ user.phone|slice:'3:' }}{% else %}{{ user.phone }}{% endif %}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
         </div>
-        <p class="connect-hint">Tigo Pesa, M-Pesa, Airtel Money, au HaloPesa</p>
+        <div class="wallet-logos" aria-label="Mobile money wallets">
+          <img src="{% static 'img/wallets/m-pesa.svg' %}" alt="M-Pesa" title="M-Pesa">
+          <img src="{% static 'img/wallets/airtel-money.svg' %}" alt="Airtel Money" title="Airtel Money">
+          <img src="{% static 'img/wallets/mixx-yas.svg' %}" alt="Mixx by Yas" title="Mixx by Yas">
+          <img src="{% static 'img/wallets/halopesa.svg' %}" alt="HaloPesa" title="HaloPesa">
+        </div>
         <button class="btn btn-primary chat-now-btn" type="submit">Chat Now</button>
       </form>
     </div>
