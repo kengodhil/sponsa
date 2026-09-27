@@ -9,9 +9,9 @@
   <div class="connect-header">
     <div>
       <h1>Connection</h1>
-      <p>malipo ya kuunganishwa na sponsor</p>
+      <p>lipa kuunganishwa na sponsor</p>
     </div>
-    <span class="connect-lock" aria-hidden="true">🔒</span>
+    <span class="connect-lock" aria-hidden="true"></span>
   </div>
   <div class="connect-body">
     <div class="connect-sponsor">
@@ -22,21 +22,20 @@
       </div>
       <div>
         <strong>{{ profile.public_name }}</strong>
-        <p>📍 {{ profile.city }}</p>
+        <p> city:{{ profile.city }}</p>
       </div>
     </div>
     <div class="connect-price">
-      <span class="connect-price-label">ADA YA KUFUNGUA</span>
       <span class="connect-price-amount">Tsh {{ unlock_fee|floatformat:0 }}</span>
       <span class="connect-price-sub">Malipo ya kuunganishwa na sponsor</span>
-      <span class="connect-bag" aria-hidden="true">💰</span>
+      <span class="connect-bag" aria-hidden="true"></span>
     </div>
     <form method="post" action="{% url 'payments:unlock' profile.pk %}" class="connect-form">
       {% csrf_token %}
-      <label for="phone">Namba ya Simu</label>
+      <label for="phone">Namba ya  simu</label>
       <div class="connect-phone">
         <span class="connect-phone-prefix">+255</span>
-        <input type="tel" id="phone" name="phone" placeholder="7XXXXXXXX" inputmode="tel" autocomplete="tel" value="{% if user.is_authenticated and user.phone %}{% if user.phone|slice:':3' == '255' %}{{ user.phone|slice:'3:' }}{% else %}{{ user.phone }}{% endif %}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
+        <input type="tel" id="phone" name="phone" placeholder="Ingiza namba ya malipo" inputmode="tel" autocomplete="tel" value="{% if user.is_authenticated and user.phone %}{% if user.phone|slice:':3' == '255' %}{{ user.phone|slice:'3:' }}{% else %}{{ user.phone }}{% endif %}{% endif %}" {% if user.is_authenticated and user.phone %}readonly{% endif %} required>
       </div>
       <div class="wallet-logos" aria-label="Mobile money wallets">
         <img src="{% static 'img/wallets/m-pesa.svg' %}" alt="M-Pesa" title="M-Pesa">
@@ -44,7 +43,7 @@
         <img src="{% static 'img/wallets/mixx-yas.svg' %}" alt="Mixx by Yas" title="Mixx by Yas">
         <img src="{% static 'img/wallets/halopesa.svg' %}" alt="HaloPesa" title="HaloPesa">
       </div>
-      <button class="btn connect-pay" type="submit">🔒 Lipa sasa</button>
+      <button class="btn connect-pay" type="submit">lipa</button>
     </form>
     <a class="connect-back" href="{% url 'home' %}">← chagua sponsor mpya</a>
   </div>
@@ -68,20 +67,12 @@
     {% if profile.preference %}<p class="pref">Preference: {{ profile.preference }}</p>{% endif %}
   </div>
 
-  <div class="connect-card" style="margin-top:20px;max-width:100%;box-shadow:none;border:1px solid var(--border);">
-    <div class="connect-header" style="background:linear-gradient(135deg,#ec4899 0%,#a855f7 100%);padding:20px 20px 28px;">
-      <div>
-        <h1 style="font-size:1.25rem;">Chat Now</h1>
-        <p>lipia ili kuanza mazungumzo</p>
-      </div>
-      <span class="connect-lock" aria-hidden="true">💬</span>
-    </div>
     <div class="connect-body">
       <div class="connect-price">
-        <span class="connect-price-label">ADA YA MAZUNGUMZO</span>
+        <span class="connect-price-label">ADA YA KUUNGWANISHA</span>
         <span class="connect-price-amount">Tsh {{ chat_fee|floatformat:0 }}</span>
         <span class="connect-price-sub">Malipo ya kuwasiliana na sponsor</span>
-        <span class="connect-bag" aria-hidden="true">💬</span>
+        <span class="connect-bag" aria-hidden="true"></span>
       </div>
       <form method="post" action="{% url 'payments:chat' profile.pk %}" class="connect-form">
         {% csrf_token %}
