@@ -562,28 +562,56 @@ body.pay-page .foot {
 .connect-phone {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
   background: #f8f9fc;
   border: 1.5px solid var(--border);
   border-radius: 12px;
-  padding: 4px 12px;
-  margin-bottom: 6px;
+  padding: 0;
+  margin-bottom: 10px;
+  overflow: hidden;
 }
-.connect-phone-icon { font-size: 1.1rem; }
+.connect-phone-prefix {
+  flex-shrink: 0;
+  padding: 12px 10px 12px 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: #eef0f6;
+  border-right: 1px solid var(--border);
+  letter-spacing: 0.02em;
+}
 .connect-phone input {
   border: 0;
   background: transparent;
-  padding: 12px 4px;
+  padding: 12px 14px;
   font-size: 1rem;
   font-weight: 600;
   color: var(--ink);
+  flex: 1;
+  min-width: 0;
 }
-.connect-phone input:focus { box-shadow: none; }
-.connect-hint {
-  font-size: 0.78rem;
-  color: var(--muted);
+.connect-phone input:focus { box-shadow: none; outline: none; }
+
+/* Mobile money wallet logos — one visible row */
+.wallet-logos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   margin: 0 0 16px;
+  align-items: center;
 }
+.wallet-logos img {
+  width: 100%;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
 .connect-pay {
   width: 100%;
   background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
