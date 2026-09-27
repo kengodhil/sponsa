@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
@@ -9,6 +9,8 @@ from apps.accounts.models import User
 from apps.payments.models import Payment
 from apps.sponsors.forms import SponsorProfileForm
 from apps.sponsors.models import SponsorProfile
+
+from .forms import AdminChangePasswordForm, AdminCreateForm
 
 
 def staff_only(user):
@@ -70,8 +72,19 @@ def dashboard(request):
         {
             "profiles": SponsorProfile.objects.all().order_by("-created_at"),
             "payments": Payment.objects.select_related("user", "sponsor")[:25],
+            "admins": User.objects.filter(
+                is_active=True,
+            )
+            .filter(models_q_staff_or_admin())
+            .order_by("display_name", "phone"),
         },
     )
+
+
+def models_q_staff_or_admin():
+    from django.db.models import Q
+
+    return Q(is_staff=True) | Q(role=User.Role.ADMIN)
 
 
 @staff_required
@@ -114,3 +127,35 @@ def delete_profile(request, pk):
     profile.delete()
     messages.success(request, f"{name} removed.")
     return redirect("staff:dashboard")
+
+
+@staff_required
+def change_password(request):
+    form = AdminChangePasswordForm(request.user, data=request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        update_session_auth_hash(request, request.user)
+        messages.success(request, "Password updated successfully.")
+        return redirect("staff:dashboard")
+    return render(
+        request,
+        "staff/change_password.html",
+        {"form": form},
+    )
+
+
+@staff_required
+def add_admin(request):
+    form = AdminCreateForm(data=request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save()
+        messages.success(
+            request,
+            f"Admin created: {user.get_display_label()} ({user.phone}).",
+        )
+        return redirect("staff:dashboard")
+    return render(
+        request,
+        "staff/add_admin.html",
+        {"form": form},
+    )

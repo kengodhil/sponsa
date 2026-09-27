@@ -7,8 +7,10 @@
       <h1 style="margin:0 0 4px;">Admin</h1>
       <p class="lead" style="margin:0;">Add sponsors with photo and details</p>
     </div>
-    <div class="btn-row" style="display:flex;flex-direction:row;gap:10px;margin:0;">
+    <div class="btn-row" style="display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;margin:0;">
       <a class="btn btn-gold" href="{% url 'staff:create_profile' %}">+ Add sponsor</a>
+      <a class="btn btn-outline" href="{% url 'staff:add_admin' %}">+ Add admin</a>
+      <a class="btn btn-outline" href="{% url 'staff:change_password' %}">Change password</a>
       <a class="btn btn-dark" href="{% url 'home' %}">View site</a>
       <form method="post" action="{% url 'staff:logout' %}" style="margin:0;">
         {% csrf_token %}
@@ -55,6 +57,32 @@
           </tr>
         {% empty %}
           <tr><td colspan="8">No sponsors yet. Add one with photo and details.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin:28px 0 12px;">Admins ({{ admins|length }})</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Staff</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for admin in admins %}
+          <tr>
+            <td><strong>{{ admin.get_display_label }}</strong>{% if admin.pk == user.pk %} <span class="tiny">(you)</span>{% endif %}</td>
+            <td>{{ admin.phone }}</td>
+            <td>{{ admin.get_role_display }}</td>
+            <td>{% if admin.is_staff %}Yes{% else %}No{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No admins found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
